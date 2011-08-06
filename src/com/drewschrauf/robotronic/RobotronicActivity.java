@@ -22,6 +22,7 @@ public abstract class RobotronicActivity<A> extends ListActivity {
 		setContentView(R.layout.main);
 		
 		handler = new DatabaseHandler(this);
+		new FetchDataTask<A>().execute(getURL());
 	}
 
 	private class FetchDataTask<B> extends AsyncTask<String, Integer, String> {

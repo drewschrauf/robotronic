@@ -19,13 +19,13 @@ public class DatabaseHandler {
 		values.put(DatabaseHelper.COLUMN_URL, url);
 		values.put(DatabaseHelper.COLUMN_DATA, data);
 		values.put(DatabaseHelper.COLUMN_FETCHED_DATE, System.currentTimeMillis());
-		db.insert(DatabaseHelper.TABLE_NAME, null, values);
+		db.replace(DatabaseHelper.TABLE_NAME, null, values);
 	}
 	
 	public String getData(String url) {
 		SQLiteDatabase db = helper.getReadableDatabase();
 		String[] columns = {DatabaseHelper.COLUMN_DATA};
-		Cursor cursor = db.query(DatabaseHelper.TABLE_NAME, columns, DatabaseHelper.COLUMN_URL + " = " + url, null, null,
+		Cursor cursor = db.query(DatabaseHelper.TABLE_NAME, columns, DatabaseHelper.COLUMN_URL + " = '" + url + "'", null, null,
 		        null, "1");
 		
 		String data = null;

@@ -10,7 +10,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	
 	public static final String TABLE_NAME = "FETCHED_DATA";
 	public static final String COLUMN_URL = "URL";
-	public static final String COLUMN_DATA = "URL";
+	public static final String COLUMN_DATA = "DATA";
 	public static final String COLUMN_FETCHED_DATE = "FETCHED_DATE";
 
 	public DatabaseHelper(Context context) {

@@ -2,13 +2,17 @@ package com.drewschrauf.robotronic.test;
 
 import java.util.List;
 
+import android.util.Log;
+
 import com.drewschrauf.robotronic.RobotronicActivity;
 
 public class TestActivity extends RobotronicActivity<String> {
 
 	@Override
 	protected List<String> parseData(String data) {
-		// TODO Auto-generated method stub
+		if (data != null) {
+			Log.i("test", data.substring(0, 100));
+		}
 		return null;
 	}
 
@@ -20,8 +24,7 @@ public class TestActivity extends RobotronicActivity<String> {
 
 	@Override
 	protected String getURL() {
-		// TODO Auto-generated method stub
-		return null;
+		return "http://api.flickr.com/services/feeds/photos_public.gne?format=json";
 	}
 
 }
