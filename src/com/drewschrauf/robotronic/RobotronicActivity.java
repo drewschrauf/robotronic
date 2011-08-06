@@ -44,20 +44,24 @@ public abstract class RobotronicActivity<A> extends ListActivity {
 			items = parseData(handler.getData(urls[0]));
 			
 			// load items from URL
-			String inputLine = null;
+			String result;
 			try {
 				BufferedReader in = new BufferedReader(new InputStreamReader(
 						url.openStream()));
+				StringBuilder resultBuilder = new StringBuilder();
+				String inputLine = null;
 				while ((inputLine = in.readLine()) != null) {
-					System.out.println(inputLine);
+					resultBuilder.append(inputLine);
 				}
 				in.close();
+				result = resultBuilder.toString();
 			} catch (IOException ioe) {
 				thrownError = ioe;
 				return null;
 			}
-
-			return inputLine;
+			
+			handler.addData(urls[0], result);
+			return result;
 		}
 		
 		/**
