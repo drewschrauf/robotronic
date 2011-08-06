@@ -4,9 +4,9 @@ import java.util.List;
 
 import android.util.Log;
 
-import com.drewschrauf.robotronic.RobotronicActivity;
+import com.drewschrauf.robotronic.RobotronicListActivity;
 
-public class TestActivity extends RobotronicActivity<String> {
+public class TestActivity extends RobotronicListActivity<String> {
 
 	@Override
 	protected List<String> parseData(String data) {
