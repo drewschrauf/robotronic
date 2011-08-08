@@ -22,7 +22,7 @@ public abstract class RobotronicListActivity<A> extends ListActivity {
 		dbHandler = new DatabaseHandler(this);
 		msgHandler = new DataFetchHandler();
 		
-		fetchThread = new DataFetchThread(getURL(), msgHandler, dbHandler, false);
+		fetchThread = new DataFetchThread(getURL(), msgHandler, dbHandler);
 		fetchThread.start();
 	}
 	

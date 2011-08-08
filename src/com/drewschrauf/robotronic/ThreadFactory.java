@@ -30,6 +30,6 @@ public class ThreadFactory {
 			}
 		};
 		
-		new DataFetchThread(imageUrl, handler, null, true).start();
+		new BinaryFetchThread(imageUrl, handler).start();
 	}
 }
