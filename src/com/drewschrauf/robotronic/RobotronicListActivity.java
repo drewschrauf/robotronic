@@ -1,6 +1,5 @@
 package com.drewschrauf.robotronic;
 
-import java.text.ParseException;
 import java.util.List;
 
 import android.app.ListActivity;
@@ -23,7 +22,7 @@ public abstract class RobotronicListActivity<A> extends ListActivity {
 		dbHandler = new DatabaseHandler(this);
 		msgHandler = new DataFetchHandler();
 		
-		fetchThread = new DataFetchThread(getURL(), msgHandler, dbHandler);
+		fetchThread = new DataFetchThread(getURL(), msgHandler, dbHandler, false);
 		fetchThread.start();
 	}
 	
