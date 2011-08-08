@@ -1,5 +1,6 @@
 package com.drewschrauf.robotronic;
 
+import java.text.ParseException;
 import java.util.List;
 
 import android.app.ListActivity;
@@ -8,7 +9,7 @@ import android.os.Handler;
 import android.os.Message;
 
 public abstract class RobotronicListActivity<A> extends ListActivity {
-	List<A> items;
+	protected List<A> items;
 	DatabaseHandler dbHandler;
 	DataFetchHandler msgHandler;
 	DataFetchThread fetchThread;
@@ -26,12 +27,16 @@ public abstract class RobotronicListActivity<A> extends ListActivity {
 		fetchThread.start();
 	}
 	
+	public List<A> getItems() {
+		return items;
+	}
+	
 	/**
 	 * Parses the data fetched from the database or network
 	 * @param data A String containing the returned data
-	 * @return A list of items to be displayed on the screen
+	 * @return The list of items to be displayed on the screen
 	 */
-	protected abstract List<A> parseData(String data);
+	protected abstract List<A> parseData(String data) throws ParsingException;
 	
 	/**
 	 * 
@@ -50,10 +55,20 @@ public abstract class RobotronicListActivity<A> extends ListActivity {
 		public void handleMessage(Message msg) {
 			switch(msg.what) {
 				case DataFetchThread.DATA_CACHE:
-					items = parseData((String)msg.obj);
+					try {
+						items = parseData((String)msg.obj);
+						setListAdapter(getListAdapter());
+					} catch (ParsingException pe) {
+						handleException(pe);
+					}
 					break;
 				case DataFetchThread.DATA_FRESH:
-					items = parseData((String)msg.obj);
+					try {
+						items = parseData((String)msg.obj);
+						setListAdapter(getListAdapter());
+					} catch (ParsingException pe) {
+						handleException(pe);
+					}
 					break;
 				case DataFetchThread.ERROR_URL:
 					handleException((Exception)msg.obj);

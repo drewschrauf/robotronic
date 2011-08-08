@@ -14,20 +14,30 @@ public class DataFetchThread extends Thread {
 	public static final int DATA_FRESH = 2;
 	public static final int ERROR_URL = 3;
 	public static final int ERROR_IO = 4;
-	
+
 	String url;
 	Handler msgHandler;
 	DatabaseHandler dbHandler;
-	
-	public DataFetchThread(String url, Handler msgHandler, DatabaseHandler dbHandler) {
+	boolean useCache;
+
+	public DataFetchThread(String url, Handler msgHandler,
+			DatabaseHandler dbHandler) {
 		this.url = url;
 		this.msgHandler = msgHandler;
 		this.dbHandler = dbHandler;
 	}
 
+	public DataFetchThread(String url, Handler msgHandler,
+			DatabaseHandler dbHandler, boolean useCache) {
+		this.url = url;
+		this.msgHandler = msgHandler;
+		this.dbHandler = dbHandler;
+		this.useCache = useCache;
+	}
+
 	/**
-	 * Fetches the data from the database if it's available then
-	 * from the network
+	 * Fetches the data from the database if it's available then from the
+	 * network
 	 */
 	public void run() {
 		URL fetchUrl;
@@ -40,16 +50,16 @@ public class DataFetchThread extends Thread {
 			msgHandler.sendMessage(msg);
 			return;
 		}
-		
+
 		// load items from database if available
-		{
+		if (useCache) {
 			String data = dbHandler.getData(url);
 			Message msg = Message.obtain();
 			msg.what = DATA_CACHE;
 			msg.obj = data;
 			msgHandler.sendMessage(msg);
 		}
-		
+
 		// load items from URL
 		String result;
 		try {
@@ -69,8 +79,11 @@ public class DataFetchThread extends Thread {
 			msgHandler.sendMessage(msg);
 			return;
 		}
-		
-		dbHandler.addData(url, result);
+
+		if (useCache) {
+			dbHandler.addData(url, result);
+		}
+
 		{
 			Message msg = Message.obtain();
 			msg.what = DATA_FRESH;
