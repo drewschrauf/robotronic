@@ -9,9 +9,9 @@ import android.os.Message;
 
 public abstract class RobotronicListActivity<A> extends ListActivity {
 	protected List<A> items;
-	DatabaseHandler dbHandler;
-	DataFetchHandler msgHandler;
-	DataFetchThread fetchThread;
+	protected DatabaseHandler dbHandler;
+	protected DataFetchHandler msgHandler;
+	protected ThreadHandler threadHandler;
 	
 	/** Called when the activity is first created. */
 	@Override
@@ -21,10 +21,20 @@ public abstract class RobotronicListActivity<A> extends ListActivity {
 		
 		dbHandler = new DatabaseHandler(this);
 		msgHandler = new DataFetchHandler();
-		
-		fetchThread = new DataFetchThread(getURL(), msgHandler, dbHandler);
-		fetchThread.start();
+		threadHandler = new ThreadHandler();		
 	}
+	
+	@Override
+	protected void onStart() {
+		super.onStart();
+		threadHandler.makeDataDownloader(msgHandler, dbHandler, getURL());
+	}
+	
+	@Override
+	protected void onStop() {
+		super.onStop();
+		threadHandler.killAll();
+	};
 	
 	public List<A> getItems() {
 		return items;

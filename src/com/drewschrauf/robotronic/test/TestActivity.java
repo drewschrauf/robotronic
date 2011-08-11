@@ -19,7 +19,6 @@ import android.widget.TextView;
 import com.drewschrauf.robotronic.ParsingException;
 import com.drewschrauf.robotronic.R;
 import com.drewschrauf.robotronic.RobotronicListActivity;
-import com.drewschrauf.robotronic.ThreadFactory;
 
 public class TestActivity extends RobotronicListActivity<TestItem> {
 
@@ -76,7 +75,7 @@ public class TestActivity extends RobotronicListActivity<TestItem> {
 			public View getView(int position, View convertView, ViewGroup parent) {
 				View row = View.inflate(context, R.layout.testrow, null);
 				((TextView)row.findViewById(R.id.title)).setText(getItems().get(position).getTitle());
-				ThreadFactory.makeImageDownloader((ImageView)row.findViewById(R.id.image), 
+				threadHandler.makeImageDownloader((ImageView)row.findViewById(R.id.image), 
 						getItems().get(position).getImageUrl());
 				return row;
 			}

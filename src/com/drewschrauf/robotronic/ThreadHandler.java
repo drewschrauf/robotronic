@@ -1,15 +1,32 @@
 package com.drewschrauf.robotronic;
 
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.Message;
 import android.widget.ImageView;
 
-public class ThreadFactory {
+public class ThreadHandler {
+	
+	List<Thread> threads;
+	
+	public ThreadHandler() {
+		threads = new ArrayList<Thread>();
+	}
+	
+	public void killAll() {
+		for (Thread t : threads) {
+			if (t.isAlive()) {
+				t.stop();
+			}
+		}
+		threads.clear();
+	}
 
-	public static void makeImageDownloader(final ImageView imageView, String imageUrl) {
+	public void makeImageDownloader(final ImageView imageView, String imageUrl) {
 		Handler handler = new Handler() {
 			@Override
 			public void handleMessage(Message msg) {
@@ -30,6 +47,14 @@ public class ThreadFactory {
 			}
 		};
 		
-		new BinaryFetchThread(imageUrl, handler).start();
+		BinaryFetchThread thread = new BinaryFetchThread(imageUrl, handler);
+		threads.add(thread);
+		thread.start();
+	}
+	
+	public void makeDataDownloader(Handler msgHandler, DatabaseHandler dbHandler, String url) {
+		DataFetchThread thread = new DataFetchThread(url, msgHandler, dbHandler);
+		threads.add(thread);
+		thread.start();
 	}
 }
