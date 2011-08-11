@@ -1,5 +1,6 @@
 package com.drewschrauf.robotronic;
 
+import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.http.client.methods.HttpGet;
@@ -7,6 +8,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 
 public class BinaryFetchThread extends Thread {
 	public static final int DATA_CACHE = 1;
@@ -26,6 +28,7 @@ public class BinaryFetchThread extends Thread {
 	 * network
 	 */
 	public void run() {
+		Log.d("test", "Starting: " + url);
 		InputStream is = null;
 		try {
 			is = new DefaultHttpClient().
@@ -46,5 +49,6 @@ public class BinaryFetchThread extends Thread {
 			msg.obj = is;
 			msgHandler.sendMessage(msg);
 		}
+		Log.d("test", "Finished: " + url);
 	}
 }

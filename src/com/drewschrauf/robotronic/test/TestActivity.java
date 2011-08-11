@@ -29,7 +29,7 @@ public class TestActivity extends RobotronicListActivity<TestItem> {
 		try {
 			JSONObject feed = new JSONObject(data);
 			JSONArray items = feed.getJSONArray("items");
-			for (int x = 0; x < items.length(); x++) {
+			for (int x = 0; x < Math.min(items.length(), 20); x++) {
 				JSONObject item = items.getJSONObject(x);
 				result.add(new TestItem(item.getString("title"), item
 						.getJSONObject("media").getString("m")));
