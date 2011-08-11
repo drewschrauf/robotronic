@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.Message;
@@ -15,10 +16,14 @@ public class ThreadHandler {
 
 	List<Thread> threads;
 	Map<String, Drawable> cachedImages;
+	protected DatabaseHandler dbHandler;
+	Context context;
 
-	public ThreadHandler() {
+	public ThreadHandler(Context context) {
 		threads = new ArrayList<Thread>();
 		cachedImages = new HashMap<String, Drawable>();
+		dbHandler = new DatabaseHandler(context);
+		this.context = context;
 	}
 
 	public void killAll() {
@@ -30,6 +35,11 @@ public class ThreadHandler {
 		threads.clear();
 	}
 
+	/**
+	 * Downloads the image from the URL or restores it from the cache.
+	 * @param imageView The View that should be updated with the retrieved image
+	 * @param imageUrl The URL to fetch the image from
+	 */
 	public void makeImageDownloader(final ImageView imageView,
 			final String imageUrl) {
 		Handler handler = new Handler() {
@@ -56,14 +66,19 @@ public class ThreadHandler {
 		if (cachedImages.containsKey(imageUrl)) {
 			imageView.setImageDrawable(cachedImages.get(imageUrl));
 		} else {
-			BinaryFetchThread thread = new BinaryFetchThread(imageUrl, handler);
+			BinaryFetchThread thread = new BinaryFetchThread(imageUrl, handler, context);
 			threads.add(thread);
 			thread.start();
 		}
 	}
 
+	/**
+	 * Downloads text data from the URL or restores it from the cache
+	 * @param msgHandler The handler to use for parsing the retrieved data
+	 * @param url The URL to retrieve the data from
+	 */
 	public void makeDataDownloader(Handler msgHandler,
-			DatabaseHandler dbHandler, String url) {
+			String url) {
 		DataFetchThread thread = new DataFetchThread(url, msgHandler, dbHandler);
 		threads.add(thread);
 		thread.start();

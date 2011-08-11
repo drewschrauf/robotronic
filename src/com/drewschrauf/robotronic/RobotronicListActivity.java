@@ -9,7 +9,6 @@ import android.os.Message;
 
 public abstract class RobotronicListActivity<A> extends ListActivity {
 	protected List<A> items;
-	protected DatabaseHandler dbHandler;
 	protected DataFetchHandler msgHandler;
 	protected ThreadHandler threadHandler;
 	
@@ -17,17 +16,16 @@ public abstract class RobotronicListActivity<A> extends ListActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.main);
+		setContentView(R.layout.main);		
 		
-		dbHandler = new DatabaseHandler(this);
 		msgHandler = new DataFetchHandler();
-		threadHandler = new ThreadHandler();		
+		threadHandler = new ThreadHandler(this);
 	}
 	
 	@Override
 	protected void onStart() {
 		super.onStart();
-		threadHandler.makeDataDownloader(msgHandler, dbHandler, getURL());
+		threadHandler.makeDataDownloader(msgHandler, getURL());
 	}
 	
 	@Override
