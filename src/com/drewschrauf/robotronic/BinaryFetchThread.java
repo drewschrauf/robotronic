@@ -30,8 +30,10 @@ public class BinaryFetchThread extends Thread {
 		this.url = url;
 		this.msgHandler = msgHandler;
 
-		useCache = mode.equals(CacheMode.CACHE_AND_FRESH)
-				|| mode.equals(CacheMode.CACHE_ONLY);
+		useCache = (mode.equals(CacheMode.CACHE_AND_FRESH) || mode
+				.equals(CacheMode.CACHE_ONLY))
+				&& android.os.Environment.getExternalStorageState().equals(
+						android.os.Environment.MEDIA_MOUNTED);
 		useFresh = mode.equals(CacheMode.CACHE_AND_FRESH)
 				|| mode.equals(CacheMode.FRESH_ONLY);
 

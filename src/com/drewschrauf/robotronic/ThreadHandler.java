@@ -106,6 +106,34 @@ public class ThreadHandler {
 	}
 
 	/**
+	 * Downloads binary data from the URL or restores it from the cache
+	 * 
+	 * @param msgHandler
+	 *            The handler to use for handling the retrieved data
+	 * @param url
+	 *            The URL to retrieve the data from
+	 */
+	public void makeBinaryDownloader(Handler msgHandler, String url,
+			CacheMode mode) {
+		BinaryFetchThread thread = new BinaryFetchThread(url, msgHandler,
+				context, mode);
+		threads.add(thread);
+		thread.start();
+	}
+
+	/**
+	 * Convenience method to make a BinaryDownloader with default cache mode
+	 * 
+	 * @param msgHandler
+	 *            The handler to use for handling the retrieved data
+	 * @param url
+	 *            The URL to retrieve the data from
+	 */
+	public void makeBinaryDownloader(Handler msgHandler, String url) {
+		makeBinaryDownloader(msgHandler, url);
+	}
+
+	/**
 	 * Downloads text data from the URL or restores it from the cache
 	 * 
 	 * @param msgHandler
