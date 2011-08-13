@@ -31,7 +31,7 @@ public class ExampleSimple extends RobotronicActivity {
 		ImageView image = (ImageView) findViewById(R.id.image);
 		getThreadHandler()
 				.makeImageDownloader(
-						"https://github.com/drewschrauf/robotronic/raw/master/src/com/drewschrauf/example/robotronic/smiley.jpg",
+						"https://raw.github.com/drewschrauf/robotronic/master/src/com/drewschrauf/example/robotronic/smiley.jpg",
 						image);
 
 		// get the text
