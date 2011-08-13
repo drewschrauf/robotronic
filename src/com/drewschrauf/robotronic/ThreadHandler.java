@@ -23,11 +23,20 @@ public class ThreadHandler {
 	protected DatabaseHandler dbHandler;
 	Context context;
 
-	public ThreadHandler(Context context) {
+	public ThreadHandler(final Context context) {
 		threads = new ArrayList<Thread>();
 		cachedImages = new HashMap<String, Drawable>();
 		dbHandler = new DatabaseHandler(context);
 		this.context = context;
+		
+		// clean up the cache
+		Thread cacheCleaner = new Thread() {
+			@Override
+			public void run() {
+				CacheCleaner.cleanFilesystem(context);
+			}
+		};
+		cacheCleaner.start();
 	}
 
 	public void killAll() {

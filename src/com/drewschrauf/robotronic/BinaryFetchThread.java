@@ -46,6 +46,9 @@ public class BinaryFetchThread extends Thread {
 		
 		if (cachePath.exists()) {
 			try {
+				
+				// update the last used date to keep it in cache
+				cachePath.setLastModified(System.currentTimeMillis());
 				is = new FileInputStream(cachePath);
 				Message msg = Message.obtain();
 				msg.what = ThreadHandler.DATA_CACHE;
