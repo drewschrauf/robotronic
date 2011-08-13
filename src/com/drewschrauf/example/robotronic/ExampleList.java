@@ -20,11 +20,11 @@ import com.drewschrauf.example.robotronic.R;
 import com.drewschrauf.robotronic.activities.RobotronicListActivity;
 import com.drewschrauf.robotronic.threads.ParsingException;
 
-public class TestActivity extends RobotronicListActivity<TestItem> {
+public class ExampleList extends RobotronicListActivity<ExampleListItem> {
 	
 	@Override
-	protected List<TestItem> parseData(String data) throws ParsingException {
-		List<TestItem> result = new ArrayList<TestItem>();
+	protected List<ExampleListItem> parseData(String data) throws ParsingException {
+		List<ExampleListItem> result = new ArrayList<ExampleListItem>();
 		
 		if (data == null) {
 			return result;
@@ -36,7 +36,7 @@ public class TestActivity extends RobotronicListActivity<TestItem> {
 			JSONArray items = feed.getJSONArray("items");
 			for (int x = 0; x < Math.min(items.length(), 10); x++) {
 				JSONObject item = items.getJSONObject(x);
-				result.add(new TestItem(item.getString("title"), item
+				result.add(new ExampleListItem(item.getString("title"), item
 						.getJSONObject("media").getString("m")));
 			}
 		} catch (JSONException e) {

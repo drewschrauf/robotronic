@@ -1,11 +1,11 @@
 package com.drewschrauf.example.robotronic;
 
-public class TestItem {
+public class ExampleListItem {
 	
 	private String title;
 	private String imageUrl;
 
-	public TestItem(String title, String imageUrl) {
+	public ExampleListItem(String title, String imageUrl) {
 		this.title = title;
 		this.imageUrl = imageUrl;
 	}
