@@ -15,9 +15,6 @@ import android.os.Handler;
 import android.os.Message;
 
 public class BinaryFetchThread extends Thread {
-	public static final int DATA_CACHE = 1;
-	public static final int DATA_FRESH = 2;
-	public static final int ERROR_IO = 4;
 
 	File cachePath;
 
@@ -51,7 +48,7 @@ public class BinaryFetchThread extends Thread {
 			try {
 				is = new FileInputStream(cachePath);
 				Message msg = Message.obtain();
-				msg.what = DATA_CACHE;
+				msg.what = ThreadHandler.DATA_CACHE;
 				msg.obj = is;
 				msgHandler.sendMessage(msg);
 				return;
@@ -78,7 +75,7 @@ public class BinaryFetchThread extends Thread {
 	    	is = new FileInputStream(cachePath);
 		} catch (Exception e) {
 			Message msg = Message.obtain();
-			msg.what = ERROR_IO;
+			msg.what = ThreadHandler.ERROR_IO;
 			msg.obj = e;
 			msgHandler.sendMessage(msg);
 			return;
@@ -86,7 +83,7 @@ public class BinaryFetchThread extends Thread {
 		
 		{
 			Message msg = Message.obtain();
-			msg.what = DATA_FRESH;
+			msg.what = ThreadHandler.DATA_FRESH;
 			msg.obj = is;
 			msgHandler.sendMessage(msg);
 		}

@@ -10,10 +10,6 @@ import android.os.Handler;
 import android.os.Message;
 
 public class DataFetchThread extends Thread {
-	public static final int DATA_CACHE = 1;
-	public static final int DATA_FRESH = 2;
-	public static final int ERROR_URL = 3;
-	public static final int ERROR_IO = 4;
 
 	private String url;
 	private Handler msgHandler;
@@ -36,7 +32,7 @@ public class DataFetchThread extends Thread {
 			fetchUrl = new URL(url);
 		} catch (final MalformedURLException e) {
 			Message msg = Message.obtain();
-			msg.what = ERROR_URL;
+			msg.what = ThreadHandler.ERROR_URL;
 			msg.obj = e;
 			msgHandler.sendMessage(msg);
 			return;
@@ -46,7 +42,7 @@ public class DataFetchThread extends Thread {
 		if (dbHandler != null) {
 			String data = dbHandler.getData(url);
 			Message msg = Message.obtain();
-			msg.what = DATA_CACHE;
+			msg.what = ThreadHandler.DATA_CACHE;
 			msg.obj = data;
 			msgHandler.sendMessage(msg);
 		}
@@ -65,7 +61,7 @@ public class DataFetchThread extends Thread {
 			result = resultBuilder.toString();
 		} catch (IOException ioe) {
 			Message msg = Message.obtain();
-			msg.what = ERROR_IO;
+			msg.what = ThreadHandler.ERROR_IO;
 			msg.obj = ioe;
 			msgHandler.sendMessage(msg);
 			return;
@@ -77,7 +73,7 @@ public class DataFetchThread extends Thread {
 
 		{
 			Message msg = Message.obtain();
-			msg.what = DATA_FRESH;
+			msg.what = ThreadHandler.DATA_FRESH;
 			msg.obj = result;
 			msgHandler.sendMessage(msg);
 		}

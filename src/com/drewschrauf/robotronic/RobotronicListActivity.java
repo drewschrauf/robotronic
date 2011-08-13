@@ -16,7 +16,6 @@ public abstract class RobotronicListActivity<A> extends ListActivity {
 	protected DataFetchHandler msgHandler;
 	protected ThreadHandler threadHandler;
 	BaseAdapter adapter;
-	ListActivity activity;
 	ListView list;
 
 	/** Called when the activity is first created. */
@@ -31,7 +30,6 @@ public abstract class RobotronicListActivity<A> extends ListActivity {
 
 		adapter = getAdapter();
 		setListAdapter(adapter);
-		activity = this;
 		list = (ListView) this.findViewById(android.R.id.list);
 	}
 
@@ -77,16 +75,14 @@ public abstract class RobotronicListActivity<A> extends ListActivity {
 	private class DataFetchHandler extends Handler {
 		@Override
 		public void handleMessage(Message msg) {
-			switch (msg.what) {
-			case DataFetchThread.DATA_CACHE:
-			case DataFetchThread.DATA_FRESH:
+			if (ThreadHandler.isData(msg.what)) {
 
 				try {
 					int originalSize = items.size();
 					items.addAll(0, parseData((String) msg.obj));
 					
 					if (originalSize == 0) {
-						activity.setListAdapter(adapter);
+						list.setAdapter(adapter);
 					} else {
 						adapter.notifyDataSetChanged();
 						int selectedIndex = list.getFirstVisiblePosition();
@@ -98,11 +94,8 @@ public abstract class RobotronicListActivity<A> extends ListActivity {
 				} catch (ParsingException pe) {
 					handleException(pe);
 				}
-				break;
-			case DataFetchThread.ERROR_URL:
-			case DataFetchThread.ERROR_IO:
+			} else {
 				handleException((Exception) msg.obj);
-				break;
 			}
 		}
 	}
