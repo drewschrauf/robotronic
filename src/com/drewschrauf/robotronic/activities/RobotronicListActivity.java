@@ -1,7 +1,10 @@
-package com.drewschrauf.robotronic;
+package com.drewschrauf.robotronic.activities;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import com.drewschrauf.robotronic.threads.ParsingException;
+import com.drewschrauf.robotronic.threads.ThreadHandler;
 
 import android.app.ListActivity;
 import android.os.Bundle;

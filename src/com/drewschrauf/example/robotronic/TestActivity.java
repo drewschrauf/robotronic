@@ -16,9 +16,9 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.drewschrauf.robotronic.ParsingException;
 import com.drewschrauf.example.robotronic.R;
-import com.drewschrauf.robotronic.RobotronicListActivity;
+import com.drewschrauf.robotronic.activities.RobotronicListActivity;
+import com.drewschrauf.robotronic.threads.ParsingException;
 
 public class TestActivity extends RobotronicListActivity<TestItem> {
 	

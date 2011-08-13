@@ -1,4 +1,6 @@
-package com.drewschrauf.robotronic;
+package com.drewschrauf.robotronic.activities;
+
+import com.drewschrauf.robotronic.threads.ThreadHandler;
 
 import android.app.Activity;
 import android.os.Bundle;

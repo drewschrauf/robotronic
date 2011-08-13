@@ -1,4 +1,4 @@
-package com.drewschrauf.robotronic;
+package com.drewschrauf.robotronic.database;
 
 import android.content.ContentValues;
 import android.content.Context;

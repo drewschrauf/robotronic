@@ -1,4 +1,4 @@
-package com.drewschrauf.robotronic;
+package com.drewschrauf.robotronic.threads;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -9,7 +9,8 @@ import java.net.URL;
 import android.os.Handler;
 import android.os.Message;
 
-import com.drewschrauf.robotronic.ThreadHandler.CacheMode;
+import com.drewschrauf.robotronic.database.DatabaseHandler;
+import com.drewschrauf.robotronic.threads.ThreadHandler.CacheMode;
 
 public class DataFetchThread extends Thread {
 

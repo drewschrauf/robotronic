@@ -1,4 +1,4 @@
-package com.drewschrauf.robotronic;
+package com.drewschrauf.robotronic.threads;
 
 public class ParsingException extends Exception {
 

@@ -1,4 +1,4 @@
-package com.drewschrauf.robotronic;
+package com.drewschrauf.robotronic.threads;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -14,7 +14,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 
-import com.drewschrauf.robotronic.ThreadHandler.CacheMode;
+import com.drewschrauf.robotronic.threads.ThreadHandler.CacheMode;
 
 public class BinaryFetchThread extends Thread {
 
