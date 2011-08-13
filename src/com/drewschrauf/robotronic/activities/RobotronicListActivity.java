@@ -23,7 +23,7 @@ public abstract class RobotronicListActivity<A> extends ListActivity {
 
 	/** Called when the activity is first created. */
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
+	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
 		items = new ArrayList<A>();

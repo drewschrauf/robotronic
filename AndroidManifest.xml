@@ -12,6 +12,13 @@
 				<category android:name="android.intent.category.LAUNCHER" />
 			</intent-filter>
 		</activity>
+		<activity android:name=".ExampleSimple" android:label="Example Simple"
+			android:configChanges="keyboardHidden|orientation">
+			<intent-filter>
+				<action android:name="android.intent.action.VIEW" />
+				<category android:name="android.intent.category.DEFAULT" />
+			</intent-filter>
+		</activity>
 		<activity android:name=".ExampleList" android:label="Example List"
 			android:configChanges="keyboardHidden|orientation">
 			<intent-filter>

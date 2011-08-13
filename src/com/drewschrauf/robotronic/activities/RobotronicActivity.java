@@ -10,7 +10,7 @@ public class RobotronicActivity extends Activity {
 	
 	/** Called when the activity is first created. */
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
+	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
 		threadHandler = new ThreadHandler(this);
