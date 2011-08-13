@@ -18,6 +18,10 @@ public class ThreadHandler {
 	public static final int ERROR_URL = 3;
 	public static final int ERROR_IO = 4;
 
+	public enum CacheMode {
+		CACHE_AND_FRESH, CACHE_ONLY, FRESH_ONLY
+	};
+
 	List<Thread> threads;
 	Map<String, Drawable> cachedImages;
 	protected DatabaseHandler dbHandler;
@@ -25,14 +29,16 @@ public class ThreadHandler {
 
 	/**
 	 * Instantiate the ThreadHandler
-	 * @param context The activity instantiating this ThreadHandler
+	 * 
+	 * @param context
+	 *            The activity instantiating this ThreadHandler
 	 */
 	public ThreadHandler(final Context context) {
 		threads = new ArrayList<Thread>();
 		cachedImages = new HashMap<String, Drawable>();
 		dbHandler = new DatabaseHandler(context);
 		this.context = context;
-		
+
 		// clean up the cache
 		Thread cacheCleaner = new Thread() {
 			@Override
@@ -61,7 +67,7 @@ public class ThreadHandler {
 	 *            The URL to fetch the image from
 	 */
 	public void makeImageDownloader(final ImageView imageView,
-			final String imageUrl) {
+			final String imageUrl, CacheMode mode) {
 		Handler handler = new Handler() {
 			@Override
 			public void handleMessage(Message msg) {
@@ -80,10 +86,23 @@ public class ThreadHandler {
 			imageView.setImageDrawable(cachedImages.get(imageUrl));
 		} else {
 			BinaryFetchThread thread = new BinaryFetchThread(imageUrl, handler,
-					context);
+					context, mode);
 			threads.add(thread);
 			thread.start();
 		}
+	}
+
+	/**
+	 * Convenience method to make an ImageDownloader with the default cache mode
+	 * 
+	 * @param imageView
+	 *            The View that should be updated with the retrieved image
+	 * @param imageUrl
+	 *            The URL to fetch the image from
+	 */
+	public void makeImageDownloader(final ImageView imageView,
+			final String imageUrl) {
+		makeImageDownloader(imageView, imageUrl, CacheMode.CACHE_AND_FRESH);
 	}
 
 	/**
@@ -94,10 +113,24 @@ public class ThreadHandler {
 	 * @param url
 	 *            The URL to retrieve the data from
 	 */
-	public void makeDataDownloader(Handler msgHandler, String url) {
-		DataFetchThread thread = new DataFetchThread(url, msgHandler, dbHandler);
+	public void makeDataDownloader(Handler msgHandler, String url,
+			CacheMode mode) {
+		DataFetchThread thread = new DataFetchThread(url, msgHandler,
+				dbHandler, mode);
 		threads.add(thread);
 		thread.start();
+	}
+
+	/**
+	 * Convenience method to make a DataDownloader with default cache mode
+	 * 
+	 * @param msgHandler
+	 *            The handler to use for the message response
+	 * @param url
+	 *            The url to fetch the data from
+	 */
+	public void makeDataDownloader(Handler msgHandler, String url) {
+		makeDataDownloader(msgHandler, url, CacheMode.CACHE_AND_FRESH);
 	}
 
 	public static boolean isData(int code) {

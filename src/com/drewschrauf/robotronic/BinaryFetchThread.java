@@ -14,27 +14,39 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 
+import com.drewschrauf.robotronic.ThreadHandler.CacheMode;
+
 public class BinaryFetchThread extends Thread {
 
 	File cachePath;
 
 	private String url;
 	private Handler msgHandler;
+	private boolean useCache;
+	private boolean useFresh;
 
-	public BinaryFetchThread(String url, Handler msgHandler, Context context) {
+	public BinaryFetchThread(String url, Handler msgHandler, Context context,
+			CacheMode mode) {
 		this.url = url;
 		this.msgHandler = msgHandler;
 
-		// make the folder for the cache
-		String cacheDirString = Environment.getExternalStorageDirectory()
-				.getAbsolutePath();
-		cacheDirString += "/android/data/" + context.getPackageName()
-				+ "/cache/";
-		new File(cacheDirString).mkdirs();
+		useCache = mode.equals(CacheMode.CACHE_AND_FRESH)
+				|| mode.equals(CacheMode.CACHE_ONLY);
+		useFresh = mode.equals(CacheMode.CACHE_AND_FRESH)
+				|| mode.equals(CacheMode.FRESH_ONLY);
 
-		// make the cache file
-		cacheDirString += url.hashCode();
-		cachePath = new File(cacheDirString);
+		if (useCache) {
+			// make the folder for the cache
+			String cacheDirString = Environment.getExternalStorageDirectory()
+					.getAbsolutePath();
+			cacheDirString += "/android/data/" + context.getPackageName()
+					+ "/cache/";
+			new File(cacheDirString).mkdirs();
+
+			// make the cache file
+			cacheDirString += url.hashCode();
+			cachePath = new File(cacheDirString);
+		}
 	}
 
 	/**
@@ -43,10 +55,10 @@ public class BinaryFetchThread extends Thread {
 	 */
 	public void run() {
 		InputStream is = null;
-		
-		if (cachePath.exists()) {
+
+		if (useCache) {
 			try {
-				
+
 				// update the last used date to keep it in cache
 				cachePath.setLastModified(System.currentTimeMillis());
 				is = new FileInputStream(cachePath);
@@ -59,36 +71,36 @@ public class BinaryFetchThread extends Thread {
 				// shouldn't happen
 			}
 		}
-		
+
 		try {
-			is = new DefaultHttpClient().
-			execute(new HttpGet(url)).
-			getEntity().
-			getContent();
-			
-			// write item to filesystem
-			FileOutputStream fos = new FileOutputStream(cachePath);
-			byte[] buf = new byte[1024];
-			int numRead;
-	    	while ( (numRead = is.read(buf) ) >= 0) {
-	    		fos.write(buf, 0, numRead);
-	    	}
-	    	is.close();
-	    	fos.close();
-	    	is = new FileInputStream(cachePath);
+			if (useFresh) {
+				is = new DefaultHttpClient().execute(new HttpGet(url))
+						.getEntity().getContent();
+
+				if (useCache) {
+					// write item to filesystem
+					FileOutputStream fos = new FileOutputStream(cachePath);
+					byte[] buf = new byte[1024];
+					int numRead;
+					while ((numRead = is.read(buf)) >= 0) {
+						fos.write(buf, 0, numRead);
+					}
+					is.close();
+					fos.close();
+					is = new FileInputStream(cachePath);
+				}
+
+				Message msg = Message.obtain();
+				msg.what = ThreadHandler.DATA_FRESH;
+				msg.obj = is;
+				msgHandler.sendMessage(msg);
+			}
 		} catch (Exception e) {
 			Message msg = Message.obtain();
 			msg.what = ThreadHandler.ERROR_IO;
 			msg.obj = e;
 			msgHandler.sendMessage(msg);
 			return;
-		}
-		
-		{
-			Message msg = Message.obtain();
-			msg.what = ThreadHandler.DATA_FRESH;
-			msg.obj = is;
-			msgHandler.sendMessage(msg);
 		}
 	}
 }

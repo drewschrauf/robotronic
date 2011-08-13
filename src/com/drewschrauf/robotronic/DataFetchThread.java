@@ -9,17 +9,26 @@ import java.net.URL;
 import android.os.Handler;
 import android.os.Message;
 
+import com.drewschrauf.robotronic.ThreadHandler.CacheMode;
+
 public class DataFetchThread extends Thread {
 
 	private String url;
 	private Handler msgHandler;
 	private DatabaseHandler dbHandler;
+	private boolean useCache;
+	private boolean useFresh;
 
 	public DataFetchThread(String url, Handler msgHandler,
-			DatabaseHandler dbHandler) {
+			DatabaseHandler dbHandler, CacheMode mode) {
 		this.url = url;
 		this.msgHandler = msgHandler;
 		this.dbHandler = dbHandler;
+
+		useCache = mode.equals(CacheMode.CACHE_AND_FRESH)
+				|| mode.equals(CacheMode.CACHE_ONLY);
+		useFresh = mode.equals(CacheMode.CACHE_AND_FRESH)
+				|| mode.equals(CacheMode.FRESH_ONLY);
 	}
 
 	/**
@@ -39,7 +48,7 @@ public class DataFetchThread extends Thread {
 		}
 
 		// load items from database if available
-		if (dbHandler != null) {
+		if (useCache) {
 			String data = dbHandler.getData(url);
 			Message msg = Message.obtain();
 			msg.what = ThreadHandler.DATA_CACHE;
@@ -50,32 +59,32 @@ public class DataFetchThread extends Thread {
 		// load items from URL
 		String result;
 		try {
-			BufferedReader in = new BufferedReader(new InputStreamReader(
-					fetchUrl.openStream()));
-			StringBuilder resultBuilder = new StringBuilder();
-			String inputLine = null;
-			while ((inputLine = in.readLine()) != null) {
-				resultBuilder.append(inputLine);
+			if (useFresh) {
+				BufferedReader in = new BufferedReader(new InputStreamReader(
+						fetchUrl.openStream()));
+				StringBuilder resultBuilder = new StringBuilder();
+				String inputLine = null;
+				while ((inputLine = in.readLine()) != null) {
+					resultBuilder.append(inputLine);
+				}
+				in.close();
+				result = resultBuilder.toString();
+
+				if (useCache) {
+					dbHandler.addData(url, result);
+				}
+
+				Message msg = Message.obtain();
+				msg.what = ThreadHandler.DATA_FRESH;
+				msg.obj = result;
+				msgHandler.sendMessage(msg);
 			}
-			in.close();
-			result = resultBuilder.toString();
 		} catch (IOException ioe) {
 			Message msg = Message.obtain();
 			msg.what = ThreadHandler.ERROR_IO;
 			msg.obj = ioe;
 			msgHandler.sendMessage(msg);
 			return;
-		}
-
-		if (dbHandler != null) {
-			dbHandler.addData(url, result);
-		}
-
-		{
-			Message msg = Message.obtain();
-			msg.what = ThreadHandler.DATA_FRESH;
-			msg.obj = result;
-			msgHandler.sendMessage(msg);
 		}
 	}
 }
