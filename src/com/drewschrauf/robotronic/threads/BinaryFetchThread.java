@@ -16,19 +16,19 @@ import android.os.Message;
 
 import com.drewschrauf.robotronic.threads.ThreadHandler.CacheMode;
 
-public class BinaryFetchThread extends Thread {
+public class BinaryFetchThread extends RobotronicThread {
 
 	File cachePath;
 
-	private String url;
 	private Handler msgHandler;
 	private boolean useCache;
 	private boolean useFresh;
 
 	public BinaryFetchThread(String url, Handler msgHandler, Context context,
-			CacheMode mode) {
+			CacheMode mode, Handler doneHandler) {
 		this.url = url;
 		this.msgHandler = msgHandler;
+		this.doneHandler = doneHandler;
 
 		useCache = (mode.equals(CacheMode.CACHE_AND_FRESH) || mode
 				.equals(CacheMode.CACHE_ONLY))
@@ -68,6 +68,7 @@ public class BinaryFetchThread extends Thread {
 				msg.what = ThreadHandler.DATA_CACHE;
 				msg.obj = is;
 				msgHandler.sendMessage(msg);
+				done();
 				return;
 			} catch (FileNotFoundException e) {
 				// shouldn't happen
@@ -102,7 +103,9 @@ public class BinaryFetchThread extends Thread {
 			msg.what = ThreadHandler.ERROR_IO;
 			msg.obj = e;
 			msgHandler.sendMessage(msg);
+			done();
 			return;
 		}
+		done();
 	}
 }

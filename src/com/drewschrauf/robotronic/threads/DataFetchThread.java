@@ -12,19 +12,19 @@ import android.os.Message;
 import com.drewschrauf.robotronic.database.DatabaseHandler;
 import com.drewschrauf.robotronic.threads.ThreadHandler.CacheMode;
 
-public class DataFetchThread extends Thread {
+public class DataFetchThread extends RobotronicThread {
 
-	private String url;
 	private Handler msgHandler;
 	private DatabaseHandler dbHandler;
 	private boolean useCache;
 	private boolean useFresh;
 
 	public DataFetchThread(String url, Handler msgHandler,
-			DatabaseHandler dbHandler, CacheMode mode) {
+			DatabaseHandler dbHandler, CacheMode mode, Handler doneHandler) {
 		this.url = url;
 		this.msgHandler = msgHandler;
 		this.dbHandler = dbHandler;
+		this.doneHandler = doneHandler;
 
 		useCache = mode.equals(CacheMode.CACHE_AND_FRESH)
 				|| mode.equals(CacheMode.CACHE_ONLY);
@@ -45,6 +45,7 @@ public class DataFetchThread extends Thread {
 			msg.what = ThreadHandler.ERROR_URL;
 			msg.obj = e;
 			msgHandler.sendMessage(msg);
+			done();
 			return;
 		}
 
@@ -87,7 +88,9 @@ public class DataFetchThread extends Thread {
 			msg.what = ThreadHandler.ERROR_IO;
 			msg.obj = ioe;
 			msgHandler.sendMessage(msg);
+			done();
 			return;
 		}
+		done();
 	}
 }

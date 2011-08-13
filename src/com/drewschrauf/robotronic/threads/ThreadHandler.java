@@ -1,18 +1,16 @@
 package com.drewschrauf.robotronic.threads;
 
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-
-import com.drewschrauf.robotronic.database.DatabaseHandler;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.Message;
 import android.widget.ImageView;
+
+import com.drewschrauf.robotronic.database.DatabaseHandler;
 
 public class ThreadHandler {
 	public static final int DATA_CACHE = 1;
@@ -24,10 +22,11 @@ public class ThreadHandler {
 		CACHE_AND_FRESH, CACHE_ONLY, FRESH_ONLY
 	};
 
-	List<Thread> threads;
+	Map<String, Thread> threads;
 	Map<String, Drawable> cachedImages;
 	protected DatabaseHandler dbHandler;
 	Context context;
+	private Handler doneHandler;
 
 	/**
 	 * Instantiate the ThreadHandler
@@ -36,10 +35,11 @@ public class ThreadHandler {
 	 *            The activity instantiating this ThreadHandler
 	 */
 	public ThreadHandler(final Context context) {
-		threads = new ArrayList<Thread>();
+		threads = new HashMap<String, Thread>();
 		cachedImages = new HashMap<String, Drawable>();
 		dbHandler = new DatabaseHandler(context);
 		this.context = context;
+		this.doneHandler = new DoneHandler();
 
 		// clean up the cache
 		Thread cacheCleaner = new Thread() {
@@ -52,7 +52,7 @@ public class ThreadHandler {
 	}
 
 	public void killAll() {
-		for (Thread t : threads) {
+		for (Thread t : threads.values()) {
 			if (t.isAlive()) {
 				t.stop();
 			}
@@ -88,8 +88,8 @@ public class ThreadHandler {
 			imageView.setImageDrawable(cachedImages.get(imageUrl));
 		} else {
 			BinaryFetchThread thread = new BinaryFetchThread(imageUrl, handler,
-					context, mode);
-			threads.add(thread);
+					context, mode, doneHandler);
+			threads.put(imageUrl, thread);
 			thread.start();
 		}
 	}
@@ -118,8 +118,8 @@ public class ThreadHandler {
 	public void makeBinaryDownloader(String url, CacheMode mode,
 			Handler msgHandler) {
 		BinaryFetchThread thread = new BinaryFetchThread(url, msgHandler,
-				context, mode);
-		threads.add(thread);
+				context, mode, doneHandler);
+		threads.put(url, thread);
 		thread.start();
 	}
 
@@ -146,8 +146,8 @@ public class ThreadHandler {
 	public void makeDataDownloader(String url, CacheMode mode,
 			Handler msgHandler) {
 		DataFetchThread thread = new DataFetchThread(url, msgHandler,
-				dbHandler, mode);
-		threads.add(thread);
+				dbHandler, mode, doneHandler);
+		threads.put(url, thread);
 		thread.start();
 	}
 
@@ -169,5 +169,13 @@ public class ThreadHandler {
 
 	public static boolean isError(int code) {
 		return (code == ERROR_URL || code == ERROR_IO);
+	}
+
+	private class DoneHandler extends Handler {
+		@Override
+		public void handleMessage(Message msg) {
+			String url = (String) msg.obj;
+			threads.remove(url);
+		}
 	}
 }
