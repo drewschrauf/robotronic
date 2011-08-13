@@ -22,7 +22,6 @@ public abstract class RobotronicListActivity<A> extends ListActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.main);
 
 		items = new ArrayList<A>();
 		msgHandler = new DataFetchHandler();

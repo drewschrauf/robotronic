@@ -50,10 +50,12 @@ public class DataFetchThread extends Thread {
 		// load items from database if available
 		if (useCache) {
 			String data = dbHandler.getData(url);
-			Message msg = Message.obtain();
-			msg.what = ThreadHandler.DATA_CACHE;
-			msg.obj = data;
-			msgHandler.sendMessage(msg);
+			if (data != null) {
+				Message msg = Message.obtain();
+				msg.what = ThreadHandler.DATA_CACHE;
+				msg.obj = data;
+				msgHandler.sendMessage(msg);
+			}
 		}
 
 		// load items from URL

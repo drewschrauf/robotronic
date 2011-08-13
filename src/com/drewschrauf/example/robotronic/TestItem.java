@@ -1,4 +1,4 @@
-package com.drewschrauf.robotronic.test;
+package com.drewschrauf.example.robotronic;
 
 public class TestItem {
 	

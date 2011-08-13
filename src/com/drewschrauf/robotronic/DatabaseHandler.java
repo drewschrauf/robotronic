@@ -20,6 +20,7 @@ public class DatabaseHandler {
 		values.put(DatabaseHelper.COLUMN_DATA, data);
 		values.put(DatabaseHelper.COLUMN_FETCHED_DATE, System.currentTimeMillis());
 		db.replace(DatabaseHelper.TABLE_NAME, null, values);
+		db.close();
 	}
 	
 	public String getData(String url) {
@@ -33,6 +34,7 @@ public class DatabaseHandler {
 			data = cursor.getString(0);
 		}
 		cursor.close();
+		db.close();
 		return data;
 	}
 

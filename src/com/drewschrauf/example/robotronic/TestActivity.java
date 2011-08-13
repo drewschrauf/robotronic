@@ -1,4 +1,4 @@
-package com.drewschrauf.robotronic.test;
+package com.drewschrauf.example.robotronic;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +17,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.drewschrauf.robotronic.ParsingException;
-import com.drewschrauf.robotronic.R;
+import com.drewschrauf.example.robotronic.R;
 import com.drewschrauf.robotronic.RobotronicListActivity;
 
 public class TestActivity extends RobotronicListActivity<TestItem> {
