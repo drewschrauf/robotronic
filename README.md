@@ -3,12 +3,15 @@ Robotonic is a library for handling data driven Android apps. It makes common ta
 
 ## Usage ##
 You can use Robotronic just by extending `RobotronicActivity` then fetching data by calling:
+
     getThreadHandler().makeDataDownloader(url, handler)
 
 binary files by calling:
+
     getThreadHandler().makeBinaryDownload(url, handler)
 
 or binding images directory to ImageViews by calling:
+
     getThreadHandler().makeImageDownloader(url, imageView)
 
 Examples of usage can be found in the source directory under `com.drewschrauf.example.robotronic`.
