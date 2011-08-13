@@ -12,8 +12,8 @@ import android.database.DataSetObserver;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 import android.widget.ImageView;
-import android.widget.ListAdapter;
 import android.widget.TextView;
 
 import com.drewschrauf.robotronic.ParsingException;
@@ -21,15 +21,20 @@ import com.drewschrauf.robotronic.R;
 import com.drewschrauf.robotronic.RobotronicListActivity;
 
 public class TestActivity extends RobotronicListActivity<TestItem> {
-
+	
 	@Override
 	protected List<TestItem> parseData(String data) throws ParsingException {
 		List<TestItem> result = new ArrayList<TestItem>();
+		
+		if (data == null) {
+			return result;
+		}
+		
 		data = data.substring(15);
 		try {
 			JSONObject feed = new JSONObject(data);
 			JSONArray items = feed.getJSONArray("items");
-			for (int x = 0; x < Math.min(items.length(), 20); x++) {
+			for (int x = 0; x < Math.min(items.length(), 10); x++) {
 				JSONObject item = items.getJSONObject(x);
 				result.add(new TestItem(item.getString("title"), item
 						.getJSONObject("media").getString("m")));
@@ -51,9 +56,9 @@ public class TestActivity extends RobotronicListActivity<TestItem> {
 	}
 
 	@Override
-	public ListAdapter getListAdapter() {
-		final Context context = this;
-		ListAdapter adapter = new ListAdapter() {
+	public BaseAdapter getAdapter() {
+		final Context context = this;		
+		BaseAdapter adapter = new BaseAdapter() {
 
 			public int getCount() {
 				return getItems().size();

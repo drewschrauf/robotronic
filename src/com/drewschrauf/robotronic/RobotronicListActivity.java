@@ -1,88 +1,108 @@
 package com.drewschrauf.robotronic;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import android.app.ListActivity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.view.View;
+import android.widget.BaseAdapter;
+import android.widget.ListView;
 
 public abstract class RobotronicListActivity<A> extends ListActivity {
 	protected List<A> items;
 	protected DataFetchHandler msgHandler;
 	protected ThreadHandler threadHandler;
-	
+	BaseAdapter adapter;
+	ListActivity activity;
+	ListView list;
+
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.main);		
-		
+		setContentView(R.layout.main);
+
+		items = new ArrayList<A>();
 		msgHandler = new DataFetchHandler();
 		threadHandler = new ThreadHandler(this);
+
+		adapter = getAdapter();
+		setListAdapter(adapter);
+		activity = this;
+		list = (ListView) this.findViewById(android.R.id.list);
 	}
-	
+
 	@Override
 	protected void onStart() {
 		super.onStart();
 		threadHandler.makeDataDownloader(msgHandler, getURL());
 	}
-	
+
 	@Override
 	protected void onStop() {
 		super.onStop();
 		threadHandler.killAll();
 	};
-	
+
 	public List<A> getItems() {
 		return items;
 	}
-	
+
 	/**
 	 * Parses the data fetched from the database or network
-	 * @param data A String containing the returned data
+	 * 
+	 * @param data
+	 *            A String containing the returned data
 	 * @return The list of items to be displayed on the screen
 	 */
 	protected abstract List<A> parseData(String data) throws ParsingException;
-	
+
 	/**
 	 * 
 	 * @param e
 	 */
 	protected abstract void handleException(Exception e);
-	
+
+	protected abstract BaseAdapter getAdapter();
+
 	/**
 	 * 
 	 * @return
 	 */
 	protected abstract String getURL();
-	
+
 	private class DataFetchHandler extends Handler {
 		@Override
 		public void handleMessage(Message msg) {
-			switch(msg.what) {
-				case DataFetchThread.DATA_CACHE:
-					try {
-						items = parseData((String)msg.obj);
-						setListAdapter(getListAdapter());
-					} catch (ParsingException pe) {
-						handleException(pe);
+			switch (msg.what) {
+			case DataFetchThread.DATA_CACHE:
+			case DataFetchThread.DATA_FRESH:
+
+				try {
+					int originalSize = items.size();
+					items.addAll(0, parseData((String) msg.obj));
+					
+					if (originalSize == 0) {
+						activity.setListAdapter(adapter);
+					} else {
+						adapter.notifyDataSetChanged();
+						int selectedIndex = list.getFirstVisiblePosition();
+						View v = list.getChildAt(0);
+						int top = (v == null) ? 0 : v.getTop();
+						list.setSelectionFromTop(items.size() - originalSize
+								+ selectedIndex, top);
 					}
-					break;
-				case DataFetchThread.DATA_FRESH:
-					try {
-						items = parseData((String)msg.obj);
-						setListAdapter(getListAdapter());
-					} catch (ParsingException pe) {
-						handleException(pe);
-					}
-					break;
-				case DataFetchThread.ERROR_URL:
-					handleException((Exception)msg.obj);
-					break;
-				case DataFetchThread.ERROR_IO:
-					handleException((Exception)msg.obj);
-					break;
+				} catch (ParsingException pe) {
+					handleException(pe);
+				}
+				break;
+			case DataFetchThread.ERROR_URL:
+			case DataFetchThread.ERROR_IO:
+				handleException((Exception) msg.obj);
+				break;
 			}
 		}
 	}
