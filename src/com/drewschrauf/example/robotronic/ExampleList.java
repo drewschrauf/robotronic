@@ -21,15 +21,16 @@ import com.drewschrauf.robotronic.activities.RobotronicListActivity;
 import com.drewschrauf.robotronic.threads.ParsingException;
 
 public class ExampleList extends RobotronicListActivity<ExampleListItem> {
-	
+
 	@Override
-	protected List<ExampleListItem> parseData(String data) throws ParsingException {
+	protected List<ExampleListItem> parseData(String data)
+			throws ParsingException {
 		List<ExampleListItem> result = new ArrayList<ExampleListItem>();
-		
+
 		if (data == null) {
 			return result;
 		}
-		
+
 		data = data.substring(15);
 		try {
 			JSONObject feed = new JSONObject(data);
@@ -57,7 +58,7 @@ public class ExampleList extends RobotronicListActivity<ExampleListItem> {
 
 	@Override
 	public BaseAdapter getAdapter() {
-		final Context context = this;		
+		final Context context = this;
 		BaseAdapter adapter = new BaseAdapter() {
 
 			public int getCount() {
@@ -79,9 +80,11 @@ public class ExampleList extends RobotronicListActivity<ExampleListItem> {
 
 			public View getView(int position, View convertView, ViewGroup parent) {
 				View row = View.inflate(context, R.layout.testrow, null);
-				((TextView)row.findViewById(R.id.title)).setText(getItems().get(position).getTitle());
-				getThreadHandler().makeImageDownloader((ImageView)row.findViewById(R.id.image), 
-						getItems().get(position).getImageUrl());
+				((TextView) row.findViewById(R.id.title)).setText(getItems()
+						.get(position).getTitle());
+				getThreadHandler().makeImageDownloader(
+						getItems().get(position).getImageUrl(),
+						(ImageView) row.findViewById(R.id.image));
 				return row;
 			}
 

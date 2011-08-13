@@ -68,8 +68,8 @@ public class ThreadHandler {
 	 * @param imageUrl
 	 *            The URL to fetch the image from
 	 */
-	public void makeImageDownloader(final ImageView imageView,
-			final String imageUrl, CacheMode mode) {
+	public void makeImageDownloader(final String imageUrl, CacheMode mode,
+			final ImageView imageView) {
 		Handler handler = new Handler() {
 			@Override
 			public void handleMessage(Message msg) {
@@ -102,9 +102,9 @@ public class ThreadHandler {
 	 * @param imageUrl
 	 *            The URL to fetch the image from
 	 */
-	public void makeImageDownloader(final ImageView imageView,
-			final String imageUrl) {
-		makeImageDownloader(imageView, imageUrl, CacheMode.CACHE_AND_FRESH);
+	public void makeImageDownloader(final String imageUrl,
+			final ImageView imageView) {
+		makeImageDownloader(imageUrl, CacheMode.CACHE_AND_FRESH, imageView);
 	}
 
 	/**
@@ -115,8 +115,8 @@ public class ThreadHandler {
 	 * @param url
 	 *            The URL to retrieve the data from
 	 */
-	public void makeBinaryDownloader(Handler msgHandler, String url,
-			CacheMode mode) {
+	public void makeBinaryDownloader(String url, CacheMode mode,
+			Handler msgHandler) {
 		BinaryFetchThread thread = new BinaryFetchThread(url, msgHandler,
 				context, mode);
 		threads.add(thread);
@@ -131,8 +131,8 @@ public class ThreadHandler {
 	 * @param url
 	 *            The URL to retrieve the data from
 	 */
-	public void makeBinaryDownloader(Handler msgHandler, String url) {
-		makeBinaryDownloader(msgHandler, url);
+	public void makeBinaryDownloader(String url, Handler msgHandler) {
+		makeBinaryDownloader(url, msgHandler);
 	}
 
 	/**
@@ -143,8 +143,8 @@ public class ThreadHandler {
 	 * @param url
 	 *            The URL to retrieve the data from
 	 */
-	public void makeDataDownloader(Handler msgHandler, String url,
-			CacheMode mode) {
+	public void makeDataDownloader(String url, CacheMode mode,
+			Handler msgHandler) {
 		DataFetchThread thread = new DataFetchThread(url, msgHandler,
 				dbHandler, mode);
 		threads.add(thread);
@@ -159,8 +159,8 @@ public class ThreadHandler {
 	 * @param url
 	 *            The url to fetch the data from
 	 */
-	public void makeDataDownloader(Handler msgHandler, String url) {
-		makeDataDownloader(msgHandler, url, CacheMode.CACHE_AND_FRESH);
+	public void makeDataDownloader(String url, Handler msgHandler) {
+		makeDataDownloader(url, CacheMode.CACHE_AND_FRESH, msgHandler);
 	}
 
 	public static boolean isData(int code) {

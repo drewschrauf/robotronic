@@ -18,7 +18,7 @@ public class ExampleSimple extends RobotronicActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+
 		// set the layout
 		setContentView(R.layout.simple);
 	}
@@ -26,37 +26,50 @@ public class ExampleSimple extends RobotronicActivity {
 	@Override
 	protected void onResume() {
 		super.onResume();
-		
+
 		// get the image
 		ImageView image = (ImageView) findViewById(R.id.image);
-		getThreadHandler().makeImageDownloader(image, "https://github.com/drewschrauf/robotronic/raw/master/src/com/drewschrauf/example/robotronic/smiley.jpg");
-		
+		getThreadHandler()
+				.makeImageDownloader(
+						"https://github.com/drewschrauf/robotronic/raw/master/src/com/drewschrauf/example/robotronic/smiley.jpg",
+						image);
+
 		// get the text
 		final TextView text = (TextView) findViewById(R.id.text);
-		getThreadHandler().makeDataDownloader(new Handler() {
-			
-			/**
-			 * Define a handler to deal with the retrieved data
-			 */
-			@Override
-			public void handleMessage(Message msg) {
-				
-				// check the return code (msg.what) to see if it isData or isError
-				if (ThreadHandler.isData(msg.what)) {
-					
-					// parse the data (msg.obj) as a String
-					try {
-						JSONObject feed = new JSONObject((String)msg.obj);
-						text.setText(feed.getString("text"));
-					} catch (JSONException e) {
-						Toast.makeText(ExampleSimple.this, "Error parsing result", Toast.LENGTH_LONG).show();
-					}
-				} else {
-					
-					// deal with any errors that arose while retrieving data
-					Toast.makeText(ExampleSimple.this, "Error retriving text", Toast.LENGTH_LONG).show();
-				}
-			}
-		}, "https://raw.github.com/drewschrauf/robotronic/master/src/com/drewschrauf/example/robotronic/example.json");
+		getThreadHandler()
+				.makeDataDownloader(
+						"https://raw.github.com/drewschrauf/robotronic/master/src/com/drewschrauf/example/robotronic/example.json",
+						new Handler() {
+
+							/**
+							 * Define a handler to deal with the retrieved data
+							 */
+							@Override
+							public void handleMessage(Message msg) {
+
+								// check the return code (msg.what) to see if it
+								// isData or isError
+								if (ThreadHandler.isData(msg.what)) {
+
+									// parse the data (msg.obj) as a String
+									try {
+										JSONObject feed = new JSONObject(
+												(String) msg.obj);
+										text.setText(feed.getString("text"));
+									} catch (JSONException e) {
+										Toast.makeText(ExampleSimple.this,
+												"Error parsing result",
+												Toast.LENGTH_LONG).show();
+									}
+								} else {
+
+									// deal with any errors that arose while
+									// retrieving data
+									Toast.makeText(ExampleSimple.this,
+											"Error retriving text",
+											Toast.LENGTH_LONG).show();
+								}
+							}
+						});
 	}
 }

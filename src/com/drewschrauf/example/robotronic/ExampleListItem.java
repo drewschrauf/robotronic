@@ -1,7 +1,7 @@
 package com.drewschrauf.example.robotronic;
 
 public class ExampleListItem {
-	
+
 	private String title;
 	private String imageUrl;
 

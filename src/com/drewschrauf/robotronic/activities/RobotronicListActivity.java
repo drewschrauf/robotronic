@@ -38,7 +38,7 @@ public abstract class RobotronicListActivity<A> extends ListActivity {
 	@Override
 	protected void onStart() {
 		super.onStart();
-		threadHandler.makeDataDownloader(msgHandler, getURL());
+		threadHandler.makeDataDownloader(getURL(), msgHandler);
 	}
 
 	@Override
@@ -49,16 +49,18 @@ public abstract class RobotronicListActivity<A> extends ListActivity {
 
 	/**
 	 * Returns the items used for populating the list
+	 * 
 	 * @return The list of items
 	 */
 	public List<A> getItems() {
 		return items;
 	}
-	
+
 	/**
 	 * A handler for populating the ListView used on this activity
+	 * 
 	 * @author Drew
-	 *
+	 * 
 	 */
 	private class DataFetchHandler extends Handler {
 		@Override
@@ -68,7 +70,7 @@ public abstract class RobotronicListActivity<A> extends ListActivity {
 				try {
 					int originalSize = items.size();
 					items.addAll(0, parseData((String) msg.obj));
-					
+
 					if (originalSize == 0) {
 						list.setAdapter(adapter);
 					} else {
@@ -87,9 +89,10 @@ public abstract class RobotronicListActivity<A> extends ListActivity {
 			}
 		}
 	}
-	
+
 	/**
 	 * Retrieve the ThreadHandler for the current Activity
+	 * 
 	 * @return The ThreadHandler for the current Activity
 	 */
 	public ThreadHandler getThreadHandler() {
@@ -107,21 +110,24 @@ public abstract class RobotronicListActivity<A> extends ListActivity {
 
 	/**
 	 * Handle any exceptions thrown during retrieval of data
-	 * @param e The Exception thrown during retrieval
+	 * 
+	 * @param e
+	 *            The Exception thrown during retrieval
 	 */
 	protected abstract void handleException(Exception e);
 
 	/**
 	 * Get the adapter to be used for the ListView
+	 * 
 	 * @return An instance of BaseAdapter
 	 */
 	protected abstract BaseAdapter getAdapter();
 
 	/**
 	 * Get the URL to be used for retrieving obects to use in the ListView
+	 * 
 	 * @return A string containing the URL to retrieve the data from
 	 */
 	protected abstract String getURL();
 
-	
 }

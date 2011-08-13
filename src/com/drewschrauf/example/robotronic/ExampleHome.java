@@ -17,10 +17,10 @@ public class ExampleHome extends Activity {
 
 		Button button1 = (Button) findViewById(R.id.Button01);
 		Button button2 = (Button) findViewById(R.id.Button02);
-		
+
 		button1.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
-				context.startActivity(new Intent(context, ExampleSimple.class));				
+				context.startActivity(new Intent(context, ExampleSimple.class));
 			}
 		});
 
