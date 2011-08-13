@@ -8,13 +8,26 @@ import android.content.Context;
 import android.os.Environment;
 
 public class CacheCleaner {
-	
-	public static final int KEEP_FILES_COUNT = 15;
-	
-	public static void cleanDB() {
 
+	/**
+	 * The number of files to keep in the cache directory
+	 */
+	public static final int KEEP_FILES_COUNT = 50;
+
+	/**
+	 * Not yet implemented
+	 * Cleans the DB to remove old entries
+	 */
+	public static void cleanDB() {
 	}
 
+	/**
+	 * Delete the oldest files from the cache directory
+	 * 
+	 * @param context
+	 *            The activity that created the ThreadHandler that spawned this
+	 *            CacheCleaner
+	 */
 	public static void cleanFilesystem(Context context) {
 		// make the folder for the cache
 		String cacheDirString = Environment.getExternalStorageDirectory()
@@ -40,8 +53,9 @@ public class CacheCleaner {
 					}
 				}
 			});
-			
-			int filesToDelete = files.length > KEEP_FILES_COUNT ? files.length - KEEP_FILES_COUNT : 0;
+
+			int filesToDelete = files.length > KEEP_FILES_COUNT ? files.length
+					- KEEP_FILES_COUNT : 0;
 			for (int i = 0; i < filesToDelete; i++) {
 				File file = files[i];
 				file.delete();

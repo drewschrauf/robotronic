@@ -4,7 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 
 public class RobotronicActivity extends Activity {
-	protected ThreadHandler threadHandler;
+	private ThreadHandler threadHandler;
 	
 	/** Called when the activity is first created. */
 	@Override
@@ -19,4 +19,12 @@ public class RobotronicActivity extends Activity {
 		super.onStop();
 		threadHandler.killAll();
 	};
+	
+	/**
+	 * Retrieve the ThreadHandler for the current Activity
+	 * @return The ThreadHandler for the current Activity
+	 */
+	public ThreadHandler getThreadHandler() {
+		return threadHandler;
+	}
 }

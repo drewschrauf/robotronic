@@ -45,33 +45,19 @@ public abstract class RobotronicListActivity<A> extends ListActivity {
 		threadHandler.killAll();
 	};
 
+	/**
+	 * Returns the items used for populating the list
+	 * @return The list of items
+	 */
 	public List<A> getItems() {
 		return items;
 	}
-
+	
 	/**
-	 * Parses the data fetched from the database or network
-	 * 
-	 * @param data
-	 *            A String containing the returned data
-	 * @return The list of items to be displayed on the screen
+	 * A handler for populating the ListView used on this activity
+	 * @author Drew
+	 *
 	 */
-	protected abstract List<A> parseData(String data) throws ParsingException;
-
-	/**
-	 * 
-	 * @param e
-	 */
-	protected abstract void handleException(Exception e);
-
-	protected abstract BaseAdapter getAdapter();
-
-	/**
-	 * 
-	 * @return
-	 */
-	protected abstract String getURL();
-
 	private class DataFetchHandler extends Handler {
 		@Override
 		public void handleMessage(Message msg) {
@@ -99,4 +85,41 @@ public abstract class RobotronicListActivity<A> extends ListActivity {
 			}
 		}
 	}
+	
+	/**
+	 * Retrieve the ThreadHandler for the current Activity
+	 * @return The ThreadHandler for the current Activity
+	 */
+	public ThreadHandler getThreadHandler() {
+		return threadHandler;
+	}
+
+	/**
+	 * Parses the data fetched from the database or network
+	 * 
+	 * @param data
+	 *            A String containing the returned data
+	 * @return The list of items to be displayed on the screen
+	 */
+	protected abstract List<A> parseData(String data) throws ParsingException;
+
+	/**
+	 * Handle any exceptions thrown during retrieval of data
+	 * @param e The Exception thrown during retrieval
+	 */
+	protected abstract void handleException(Exception e);
+
+	/**
+	 * Get the adapter to be used for the ListView
+	 * @return An instance of BaseAdapter
+	 */
+	protected abstract BaseAdapter getAdapter();
+
+	/**
+	 * Get the URL to be used for retrieving obects to use in the ListView
+	 * @return A string containing the URL to retrieve the data from
+	 */
+	protected abstract String getURL();
+
+	
 }

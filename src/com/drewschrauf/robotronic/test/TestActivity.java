@@ -80,7 +80,7 @@ public class TestActivity extends RobotronicListActivity<TestItem> {
 			public View getView(int position, View convertView, ViewGroup parent) {
 				View row = View.inflate(context, R.layout.testrow, null);
 				((TextView)row.findViewById(R.id.title)).setText(getItems().get(position).getTitle());
-				threadHandler.makeImageDownloader((ImageView)row.findViewById(R.id.image), 
+				getThreadHandler().makeImageDownloader((ImageView)row.findViewById(R.id.image), 
 						getItems().get(position).getImageUrl());
 				return row;
 			}

@@ -23,6 +23,10 @@ public class ThreadHandler {
 	protected DatabaseHandler dbHandler;
 	Context context;
 
+	/**
+	 * Instantiate the ThreadHandler
+	 * @param context The activity instantiating this ThreadHandler
+	 */
 	public ThreadHandler(final Context context) {
 		threads = new ArrayList<Thread>();
 		cachedImages = new HashMap<String, Drawable>();
