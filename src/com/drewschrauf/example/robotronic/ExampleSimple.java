@@ -24,8 +24,8 @@ public class ExampleSimple extends RobotronicActivity {
 	}
 
 	@Override
-	protected void onResume() {
-		super.onResume();
+	protected void onStart() {
+		super.onStart();
 
 		// get the image
 		ImageView image = (ImageView) findViewById(R.id.image);
