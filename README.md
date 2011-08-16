@@ -14,7 +14,7 @@ or binding images directory to ImageViews by calling:
 
     getThreadHandler().makeImageDownloader(url, imageView)
 
-Examples of usage can be found in the source directory under `com.drewschrauf.example.robotronic`.
+Examples of usage can be found in the source directory under `com.drewschrauf.example.robotronic`. More information about Robotronic can be found in the [wiki](https://github.com/drewschrauf/robotronic/wiki).
 
 
 
