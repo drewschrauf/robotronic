@@ -22,7 +22,7 @@ public class ThreadHandler {
 		CACHE_AND_FRESH, CACHE_ONLY, FRESH_ONLY
 	};
 
-	Map<String, Thread> threads;
+	Map<String, RobotronicThread> threads;
 	Map<String, Drawable> cachedImages;
 	protected DatabaseHandler dbHandler;
 	Context context;
@@ -35,7 +35,7 @@ public class ThreadHandler {
 	 *            The activity instantiating this ThreadHandler
 	 */
 	public ThreadHandler(final Context context) {
-		threads = new HashMap<String, Thread>();
+		threads = new HashMap<String, RobotronicThread>();
 		cachedImages = new HashMap<String, Drawable>();
 		dbHandler = new DatabaseHandler(context);
 		this.context = context;
@@ -163,14 +163,33 @@ public class ThreadHandler {
 		makeDataDownloader(url, CacheMode.CACHE_AND_FRESH, msgHandler);
 	}
 
+	/**
+	 * Checks to see if the message code indicates a successful return of data
+	 * 
+	 * @param code
+	 *            The message code to check
+	 * @return True if the message code indicates a successful return of data
+	 */
 	public static boolean isData(int code) {
 		return (code == DATA_CACHE || code == DATA_FRESH);
 	}
 
+	/**
+	 * Checks to see if the message code indicates an error
+	 * 
+	 * @param code
+	 *            The message code to check
+	 * @return True if the message code indicates an error
+	 */
 	public static boolean isError(int code) {
 		return (code == ERROR_URL || code == ERROR_IO);
 	}
 
+	/**
+	 * Private class for cleaning up threads when they're done.
+	 * @author drew
+	 *
+	 */
 	private class DoneHandler extends Handler {
 		@Override
 		public void handleMessage(Message msg) {
