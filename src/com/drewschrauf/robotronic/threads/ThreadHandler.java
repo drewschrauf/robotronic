@@ -63,6 +63,47 @@ public class ThreadHandler {
 	/**
 	 * Downloads the image from the URL or restores it from the cache.
 	 * 
+	 * @param imageUrl
+	 *            The URL to fetch the image from
+	 * @param mode
+	 *            The cache mode to use when fetching the image
+	 * @param msgHandler
+	 *            A handler for dealing with the retrieved image
+	 */
+	public void makeImageDownloader(final String imageUrl, CacheMode mode,
+			final Handler msgHandler) {
+		Handler handler = new Handler() {
+			@Override
+			public void handleMessage(Message msg) {
+				if (isData(msg.what)) {
+					Drawable d = Drawable.createFromStream(
+							(InputStream) msg.obj, "src");
+					cachedImages.put(imageUrl, d);
+					
+					Message sMsg = Message.obtain();
+					sMsg.what = msg.what;
+					sMsg.obj = d;
+					msgHandler.sendMessage(Message.obtain(sMsg));
+				}				
+			}
+		};
+
+		if (cachedImages.containsKey(imageUrl)) {
+			Message msg = Message.obtain();
+			msg.what = ThreadHandler.DATA_CACHE;
+			msg.obj = cachedImages.get(imageUrl);
+			msgHandler.sendMessage(msg);
+		} else {
+			BinaryFetchThread thread = new BinaryFetchThread(imageUrl, handler,
+					context, mode, doneHandler);
+			threads.put(imageUrl, thread);
+			thread.start();
+		}
+	}
+
+	/**
+	 * Downloads the image from the URL or restores it from the cache.
+	 * 
 	 * @param imageView
 	 *            The View that should be updated with the retrieved image
 	 * @param imageUrl
@@ -187,8 +228,9 @@ public class ThreadHandler {
 
 	/**
 	 * Private class for cleaning up threads when they're done.
+	 * 
 	 * @author drew
-	 *
+	 * 
 	 */
 	private class DoneHandler extends Handler {
 		@Override
