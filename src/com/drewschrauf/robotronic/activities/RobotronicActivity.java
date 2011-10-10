@@ -1,9 +1,9 @@
 package com.drewschrauf.robotronic.activities;
 
-import com.drewschrauf.robotronic.threads.ThreadHandler;
-
 import android.app.Activity;
 import android.os.Bundle;
+
+import com.drewschrauf.robotronic.threads.ThreadHandler;
 
 public class RobotronicActivity extends Activity {
 	private ThreadHandler threadHandler;

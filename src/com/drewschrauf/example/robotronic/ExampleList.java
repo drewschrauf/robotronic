@@ -16,7 +16,6 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.drewschrauf.example.robotronic.R;
 import com.drewschrauf.robotronic.activities.RobotronicListActivity;
 import com.drewschrauf.robotronic.threads.ParsingException;
 

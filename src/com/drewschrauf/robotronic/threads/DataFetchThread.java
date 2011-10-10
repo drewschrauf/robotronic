@@ -19,6 +19,20 @@ public class DataFetchThread extends RobotronicThread {
 	private boolean useCache;
 	private boolean useFresh;
 
+	/**
+	 * Creates a new DataFetchThread
+	 * 
+	 * @param url
+	 *            The URL to retrieve data from
+	 * @param msgHandler
+	 *            The handler to call back to with retrieved binary
+	 * @param context
+	 *            The context of the application using Robotronic
+	 * @param mode
+	 *            The cache mode to be used
+	 * @param doneHandler
+	 *            A generic handler to be called when the thread is done
+	 */
 	public DataFetchThread(String url, Handler msgHandler,
 			DatabaseHandler dbHandler, CacheMode mode, Handler doneHandler) {
 		this.url = url;

@@ -3,9 +3,6 @@ package com.drewschrauf.robotronic.activities;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.drewschrauf.robotronic.threads.ParsingException;
-import com.drewschrauf.robotronic.threads.ThreadHandler;
-
 import android.app.ListActivity;
 import android.os.Bundle;
 import android.os.Handler;
@@ -13,6 +10,9 @@ import android.os.Message;
 import android.view.View;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
+
+import com.drewschrauf.robotronic.threads.ParsingException;
+import com.drewschrauf.robotronic.threads.ThreadHandler;
 
 public abstract class RobotronicListActivity<A> extends ListActivity {
 	protected List<A> items;

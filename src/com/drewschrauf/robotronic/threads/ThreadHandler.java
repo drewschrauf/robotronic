@@ -1,6 +1,5 @@
 package com.drewschrauf.robotronic.threads;
 
-import java.io.InputStream;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -20,7 +19,7 @@ public class ThreadHandler {
 	public static final int ERROR_URL = 3;
 	public static final int ERROR_IO = 4;
 
-	public static final int MAX_THREAD_COUNT = 3;
+	public static final int MAX_THREAD_COUNT = 5;
 
 	public enum CacheMode {
 		CACHE_AND_FRESH, CACHE_ONLY, FRESH_ONLY
@@ -82,8 +81,7 @@ public class ThreadHandler {
 			@Override
 			public void handleMessage(Message msg) {
 				if (isData(msg.what)) {
-					Drawable d = Drawable.createFromStream(
-							(InputStream) msg.obj, "src");
+					Drawable d = (Drawable) msg.obj;
 					cachedImages.put(imageUrl, d);
 
 					Message sMsg = Message.obtain();
@@ -100,7 +98,7 @@ public class ThreadHandler {
 			msg.obj = cachedImages.get(imageUrl);
 			msgHandler.sendMessage(msg);
 		} else {
-			BinaryFetchThread thread = new BinaryFetchThread(imageUrl, handler,
+			BinaryFetchThread thread = new BinaryFetchThread(imageUrl, true, handler,
 					context, mode, doneHandler);
 			threads.put(imageUrl, thread);
 			queueThread(thread);
@@ -121,8 +119,7 @@ public class ThreadHandler {
 			@Override
 			public void handleMessage(Message msg) {
 				if (isData(msg.what)) {
-					Drawable d = Drawable.createFromStream(
-							(InputStream) msg.obj, "src");
+					Drawable d = (Drawable) msg.obj;
 					imageView.setImageDrawable(d);
 					cachedImages.put(imageUrl, d);
 				} else {
@@ -134,7 +131,7 @@ public class ThreadHandler {
 		if (cachedImages.containsKey(imageUrl)) {
 			imageView.setImageDrawable(cachedImages.get(imageUrl));
 		} else {
-			BinaryFetchThread thread = new BinaryFetchThread(imageUrl, handler,
+			BinaryFetchThread thread = new BinaryFetchThread(imageUrl, true, handler,
 					context, mode, doneHandler);
 			threads.put(imageUrl, thread);
 			queueThread(thread);
@@ -164,7 +161,7 @@ public class ThreadHandler {
 	 */
 	public void makeBinaryDownloader(String url, CacheMode mode,
 			Handler msgHandler) {
-		BinaryFetchThread thread = new BinaryFetchThread(url, msgHandler,
+		BinaryFetchThread thread = new BinaryFetchThread(url, false, msgHandler,
 				context, mode, doneHandler);
 		threads.put(url, thread);
 		queueThread(thread);

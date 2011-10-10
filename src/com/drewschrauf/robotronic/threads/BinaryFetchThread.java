@@ -10,6 +10,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
@@ -24,11 +25,32 @@ public class BinaryFetchThread extends RobotronicThread {
 	private boolean useCache;
 	private boolean useFresh;
 
-	public BinaryFetchThread(String url, Handler msgHandler, Context context,
-			CacheMode mode, Handler doneHandler) {
+	private boolean returnAsImage;
+
+	/**
+	 * Creates a new BinaryFetchThread
+	 * 
+	 * @param url
+	 *            The URL to retrieve
+	 * @param returnAsImage
+	 *            True if the stream should be converted to a binary before
+	 *            returning
+	 * @param msgHandler
+	 *            The handler to call back to with retrieved binary
+	 * @param context
+	 *            The context of the application using Robotronic
+	 * @param mode
+	 *            The cache mode to be used
+	 * @param doneHandler
+	 *            A generic handler to be called when the thread is done
+	 */
+	public BinaryFetchThread(String url, boolean returnAsImage,
+			Handler msgHandler, Context context, CacheMode mode,
+			Handler doneHandler) {
 		this.url = url;
 		this.msgHandler = msgHandler;
 		this.doneHandler = doneHandler;
+		this.returnAsImage = returnAsImage;
 
 		useCache = (mode.equals(CacheMode.CACHE_AND_FRESH) || mode
 				.equals(CacheMode.CACHE_ONLY))
@@ -66,7 +88,8 @@ public class BinaryFetchThread extends RobotronicThread {
 				is = new FileInputStream(cachePath);
 				Message msg = Message.obtain();
 				msg.what = ThreadHandler.DATA_CACHE;
-				msg.obj = is;
+				msg.obj = returnAsImage ? Drawable.createFromStream(is, "src")
+						: is;
 				msgHandler.sendMessage(msg);
 				done();
 				return;
@@ -95,7 +118,8 @@ public class BinaryFetchThread extends RobotronicThread {
 
 				Message msg = Message.obtain();
 				msg.what = ThreadHandler.DATA_FRESH;
-				msg.obj = is;
+				msg.obj = returnAsImage ? Drawable.createFromStream(is, "src")
+						: is;
 				msgHandler.sendMessage(msg);
 			}
 		} catch (Exception e) {
