@@ -2,7 +2,9 @@ package com.drewschrauf.robotronic.threads;
 
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
+import java.util.Queue;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
@@ -18,12 +20,15 @@ public class ThreadHandler {
 	public static final int ERROR_URL = 3;
 	public static final int ERROR_IO = 4;
 
+	public static final int MAX_THREAD_COUNT = 3;
+
 	public enum CacheMode {
 		CACHE_AND_FRESH, CACHE_ONLY, FRESH_ONLY
 	};
 
 	Map<String, RobotronicThread> threads;
 	Map<String, Drawable> cachedImages;
+	Queue<RobotronicThread> threadQueue;
 	protected DatabaseHandler dbHandler;
 	Context context;
 	private Handler doneHandler;
@@ -37,6 +42,7 @@ public class ThreadHandler {
 	public ThreadHandler(final Context context) {
 		threads = new HashMap<String, RobotronicThread>();
 		cachedImages = new HashMap<String, Drawable>();
+		threadQueue = new LinkedList<RobotronicThread>();
 		dbHandler = new DatabaseHandler(context);
 		this.context = context;
 		this.doneHandler = new DoneHandler();
@@ -79,12 +85,12 @@ public class ThreadHandler {
 					Drawable d = Drawable.createFromStream(
 							(InputStream) msg.obj, "src");
 					cachedImages.put(imageUrl, d);
-					
+
 					Message sMsg = Message.obtain();
 					sMsg.what = msg.what;
 					sMsg.obj = d;
 					msgHandler.sendMessage(Message.obtain(sMsg));
-				}				
+				}
 			}
 		};
 
@@ -97,7 +103,7 @@ public class ThreadHandler {
 			BinaryFetchThread thread = new BinaryFetchThread(imageUrl, handler,
 					context, mode, doneHandler);
 			threads.put(imageUrl, thread);
-			thread.start();
+			queueThread(thread);
 		}
 	}
 
@@ -131,7 +137,7 @@ public class ThreadHandler {
 			BinaryFetchThread thread = new BinaryFetchThread(imageUrl, handler,
 					context, mode, doneHandler);
 			threads.put(imageUrl, thread);
-			thread.start();
+			queueThread(thread);
 		}
 	}
 
@@ -161,7 +167,7 @@ public class ThreadHandler {
 		BinaryFetchThread thread = new BinaryFetchThread(url, msgHandler,
 				context, mode, doneHandler);
 		threads.put(url, thread);
-		thread.start();
+		queueThread(thread);
 	}
 
 	/**
@@ -189,7 +195,7 @@ public class ThreadHandler {
 		DataFetchThread thread = new DataFetchThread(url, msgHandler,
 				dbHandler, mode, doneHandler);
 		threads.put(url, thread);
-		thread.start();
+		queueThread(thread);
 	}
 
 	/**
@@ -237,6 +243,32 @@ public class ThreadHandler {
 		public void handleMessage(Message msg) {
 			String url = (String) msg.obj;
 			threads.remove(url);
+
+			startNextThread();
+		}
+	}
+
+	/**
+	 * Queue up a thread to to be run when resources are available
+	 * 
+	 * @param thread
+	 *            The thread to be queued up
+	 */
+	private void queueThread(RobotronicThread thread) {
+		threadQueue.add(thread);
+
+		if (threads.size() - threadQueue.size() < MAX_THREAD_COUNT) {
+			startNextThread();
+		}
+	}
+
+	/**
+	 * Starts the next queue thread
+	 */
+	private void startNextThread() {
+		if (threadQueue.size() > 0) {
+			RobotronicThread nextThread = threadQueue.remove();
+			nextThread.start();
 		}
 	}
 }
