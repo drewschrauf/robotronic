@@ -31,6 +31,7 @@ public class ThreadHandler {
 	protected DatabaseHandler dbHandler;
 	Context context;
 	private Handler doneHandler;
+	private RobotronicProperties properties;
 
 	/**
 	 * Instantiate the ThreadHandler
@@ -45,6 +46,7 @@ public class ThreadHandler {
 		dbHandler = new DatabaseHandler(context);
 		this.context = context;
 		this.doneHandler = new DoneHandler();
+		properties = new RobotronicProperties();
 
 		// clean up the cache
 		Thread cacheCleaner = new Thread() {
@@ -98,8 +100,8 @@ public class ThreadHandler {
 			msg.obj = cachedImages.get(imageUrl);
 			msgHandler.sendMessage(msg);
 		} else {
-			BinaryFetchThread thread = new BinaryFetchThread(imageUrl, true, handler,
-					context, mode, doneHandler);
+			BinaryFetchThread thread = new BinaryFetchThread(imageUrl, true,
+					handler, context, mode, doneHandler, properties);
 			threads.put(imageUrl, thread);
 			queueThread(thread);
 		}
@@ -131,8 +133,8 @@ public class ThreadHandler {
 		if (cachedImages.containsKey(imageUrl)) {
 			imageView.setImageDrawable(cachedImages.get(imageUrl));
 		} else {
-			BinaryFetchThread thread = new BinaryFetchThread(imageUrl, true, handler,
-					context, mode, doneHandler);
+			BinaryFetchThread thread = new BinaryFetchThread(imageUrl, true,
+					handler, context, mode, doneHandler, properties);
 			threads.put(imageUrl, thread);
 			queueThread(thread);
 		}
@@ -161,8 +163,8 @@ public class ThreadHandler {
 	 */
 	public void makeBinaryDownloader(String url, CacheMode mode,
 			Handler msgHandler) {
-		BinaryFetchThread thread = new BinaryFetchThread(url, false, msgHandler,
-				context, mode, doneHandler);
+		BinaryFetchThread thread = new BinaryFetchThread(url, false,
+				msgHandler, context, mode, doneHandler, properties);
 		threads.put(url, thread);
 		queueThread(thread);
 	}
@@ -190,7 +192,7 @@ public class ThreadHandler {
 	public void makeDataDownloader(String url, CacheMode mode,
 			Handler msgHandler) {
 		DataFetchThread thread = new DataFetchThread(url, msgHandler,
-				dbHandler, mode, doneHandler);
+				dbHandler, mode, doneHandler, properties);
 		threads.put(url, thread);
 		queueThread(thread);
 	}
@@ -267,5 +269,9 @@ public class ThreadHandler {
 			RobotronicThread nextThread = threadQueue.remove();
 			nextThread.start();
 		}
+	}
+
+	public RobotronicProperties getProperties() {
+		return properties;
 	}
 }

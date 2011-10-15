@@ -46,11 +46,12 @@ public class BinaryFetchThread extends RobotronicThread {
 	 */
 	public BinaryFetchThread(String url, boolean returnAsImage,
 			Handler msgHandler, Context context, CacheMode mode,
-			Handler doneHandler) {
+			Handler doneHandler, RobotronicProperties properties) {
 		this.url = url;
 		this.msgHandler = msgHandler;
 		this.doneHandler = doneHandler;
 		this.returnAsImage = returnAsImage;
+		this.properties = properties;
 
 		useCache = (mode.equals(CacheMode.CACHE_AND_FRESH) || mode
 				.equals(CacheMode.CACHE_ONLY))
@@ -78,8 +79,9 @@ public class BinaryFetchThread extends RobotronicThread {
 	 * network
 	 */
 	public void run() {
-		if (isStopping) return;
-		
+		if (isStopping)
+			return;
+
 		InputStream is = null;
 
 		if (useCache) {
@@ -105,7 +107,8 @@ public class BinaryFetchThread extends RobotronicThread {
 			}
 		}
 
-		if (isStopping) return;
+		if (isStopping)
+			return;
 
 		try {
 			if (useFresh) {

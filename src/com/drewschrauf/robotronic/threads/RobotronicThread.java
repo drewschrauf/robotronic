@@ -6,6 +6,7 @@ import android.os.Message;
 public abstract class RobotronicThread extends Thread {
 	protected String url;
 	protected Handler doneHandler;
+	protected RobotronicProperties properties;
 	protected boolean isStopping;
 
 	protected void done() {

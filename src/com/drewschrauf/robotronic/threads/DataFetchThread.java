@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
 
 import android.os.Handler;
 import android.os.Message;
@@ -34,11 +35,13 @@ public class DataFetchThread extends RobotronicThread {
 	 *            A generic handler to be called when the thread is done
 	 */
 	public DataFetchThread(String url, Handler msgHandler,
-			DatabaseHandler dbHandler, CacheMode mode, Handler doneHandler) {
+			DatabaseHandler dbHandler, CacheMode mode, Handler doneHandler,
+			RobotronicProperties properties) {
 		this.url = url;
 		this.msgHandler = msgHandler;
 		this.dbHandler = dbHandler;
 		this.doneHandler = doneHandler;
+		this.properties = properties;
 
 		useCache = mode.equals(CacheMode.CACHE_AND_FRESH)
 				|| mode.equals(CacheMode.CACHE_ONLY);
@@ -51,8 +54,9 @@ public class DataFetchThread extends RobotronicThread {
 	 * network
 	 */
 	public void run() {
-		if (isStopping) return;
-		
+		if (isStopping)
+			return;
+
 		URL fetchUrl;
 		try {
 			fetchUrl = new URL(url);
@@ -76,14 +80,21 @@ public class DataFetchThread extends RobotronicThread {
 			}
 		}
 
-		if (isStopping) return;
+		if (isStopping)
+			return;
 
 		// load items from URL
 		String result;
 		try {
 			if (useFresh) {
+				URLConnection connection = fetchUrl.openConnection();
+				if (properties.getDataRequestType() != null) {
+					connection.addRequestProperty("Content-Type",
+							properties.getDataRequestType());
+				}
 				BufferedReader in = new BufferedReader(new InputStreamReader(
-						fetchUrl.openStream()));
+						connection.getInputStream()));
+
 				StringBuilder resultBuilder = new StringBuilder();
 				String inputLine = null;
 				while ((inputLine = in.readLine()) != null) {
