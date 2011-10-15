@@ -96,7 +96,12 @@ public class BinaryFetchThread extends RobotronicThread {
 				done();
 				return;
 			} catch (FileNotFoundException e) {
-				// shouldn't happen
+				Message msg = Message.obtain();
+				msg.what = ThreadHandler.ERROR_IO;
+				msg.obj = e;
+				msgHandler.sendMessage(msg);
+				done();
+				return;
 			}
 		}
 
