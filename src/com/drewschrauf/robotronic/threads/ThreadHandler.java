@@ -57,9 +57,9 @@ public class ThreadHandler {
 	}
 
 	public void killAll() {
-		for (Thread t : threads.values()) {
+		for (RobotronicThread t : threads.values()) {
 			if (t.isAlive()) {
-				t.stop();
+				t.requestStop();
 			}
 		}
 		threads.clear();

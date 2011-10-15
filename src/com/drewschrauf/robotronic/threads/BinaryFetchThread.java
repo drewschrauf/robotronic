@@ -78,6 +78,8 @@ public class BinaryFetchThread extends RobotronicThread {
 	 * network
 	 */
 	public void run() {
+		if (isStopping) return;
+		
 		InputStream is = null;
 
 		if (useCache) {
@@ -97,6 +99,8 @@ public class BinaryFetchThread extends RobotronicThread {
 				// shouldn't happen
 			}
 		}
+
+		if (isStopping) return;
 
 		try {
 			if (useFresh) {

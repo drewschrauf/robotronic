@@ -51,6 +51,8 @@ public class DataFetchThread extends RobotronicThread {
 	 * network
 	 */
 	public void run() {
+		if (isStopping) return;
+		
 		URL fetchUrl;
 		try {
 			fetchUrl = new URL(url);
@@ -73,6 +75,8 @@ public class DataFetchThread extends RobotronicThread {
 				msgHandler.sendMessage(msg);
 			}
 		}
+
+		if (isStopping) return;
 
 		// load items from URL
 		String result;
