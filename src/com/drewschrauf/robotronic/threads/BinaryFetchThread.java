@@ -92,12 +92,16 @@ public class BinaryFetchThread extends RobotronicThread {
 				is = new FileInputStream(cachePath);
 				Message msg = Message.obtain();
 				msg.what = ThreadHandler.DATA_CACHE;
-				msg.obj = returnAsImage ? Drawable.createFromStream(is, "src")
-						: is;
+				try {
+					msg.obj = returnAsImage ? Drawable.createFromStream(is,
+							"src") : is;
+				} catch (OutOfMemoryError oome) {
+					throw new Exception("No memory to load image", oome);
+				}
 				msgHandler.sendMessage(msg);
 				done();
 				return;
-			} catch (FileNotFoundException e) {
+			} catch (Exception e) {
 				Message msg = Message.obtain();
 				msg.what = ThreadHandler.ERROR_IO;
 				msg.obj = e;
@@ -130,8 +134,12 @@ public class BinaryFetchThread extends RobotronicThread {
 
 				Message msg = Message.obtain();
 				msg.what = ThreadHandler.DATA_FRESH;
-				msg.obj = returnAsImage ? Drawable.createFromStream(is, "src")
-						: is;
+				try {
+					msg.obj = returnAsImage ? Drawable.createFromStream(is,
+							"src") : is;
+				} catch (OutOfMemoryError oome) {
+					throw new Exception("No memory to load image", oome);
+				}
 				msgHandler.sendMessage(msg);
 			}
 		} catch (Exception e) {
