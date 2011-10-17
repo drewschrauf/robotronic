@@ -15,14 +15,21 @@ public class DatabaseHandler {
 	}
 
 	public void addData(String url, String data) {
-		SQLiteDatabase db = helper.getWritableDatabase();
-		ContentValues values = new ContentValues();
-		values.put(DatabaseHelper.COLUMN_URL, url);
-		values.put(DatabaseHelper.COLUMN_DATA, data);
-		values.put(DatabaseHelper.COLUMN_FETCHED_DATE,
-				System.currentTimeMillis());
-		db.replace(DatabaseHelper.TABLE_NAME, null, values);
-		db.close();
+		try {
+			SQLiteDatabase db = helper.getWritableDatabase();
+			ContentValues values = new ContentValues();
+			values.put(DatabaseHelper.COLUMN_URL, url);
+			values.put(DatabaseHelper.COLUMN_DATA, data);
+			values.put(DatabaseHelper.COLUMN_FETCHED_DATE,
+					System.currentTimeMillis());
+			db.replace(DatabaseHelper.TABLE_NAME, null, values);
+			db.close();
+		} catch (Exception e) {
+			// database was closed before it could be written to, just skip it
+			// this time
+			Log.e("DatabaseHandler",
+					"Database could not be written to, skipping cache");
+		}
 	}
 
 	/**
