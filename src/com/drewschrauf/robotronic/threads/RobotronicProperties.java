@@ -1,13 +1,13 @@
 package com.drewschrauf.robotronic.threads;
 
 public class RobotronicProperties {
-	private String dataRequestType;
+	private String dataAcceptType;
 
-	public String getDataRequestType() {
-		return dataRequestType;
+	public String getDataAcceptType() {
+		return dataAcceptType;
 	}
 
-	public void setDataRequestType(String dataRequestType) {
-		this.dataRequestType = dataRequestType;
+	public void setDataAcceptType(String dataRequestType) {
+		this.dataAcceptType = dataRequestType;
 	}
 }

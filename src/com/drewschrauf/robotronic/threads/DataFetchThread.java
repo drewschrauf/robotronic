@@ -88,9 +88,9 @@ public class DataFetchThread extends RobotronicThread {
 		try {
 			if (useFresh) {
 				URLConnection connection = fetchUrl.openConnection();
-				if (properties.getDataRequestType() != null) {
-					connection.addRequestProperty("Content-Type",
-							properties.getDataRequestType());
+				if (properties.getDataAcceptType() != null) {
+					connection.addRequestProperty("Accept",
+							properties.getDataAcceptType());
 				}
 				BufferedReader in = new BufferedReader(new InputStreamReader(
 						connection.getInputStream()));
