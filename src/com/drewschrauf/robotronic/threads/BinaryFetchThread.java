@@ -2,8 +2,9 @@ package com.drewschrauf.robotronic.threads;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FilterInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.http.client.methods.HttpGet;
@@ -135,8 +136,8 @@ public class BinaryFetchThread extends RobotronicThread {
 				Message msg = Message.obtain();
 				msg.what = ThreadHandler.DATA_FRESH;
 				try {
-					msg.obj = returnAsImage ? Drawable.createFromStream(is,
-							"src") : is;
+					msg.obj = returnAsImage ? Drawable.createFromStream(
+							new FlushedInputStream(is), "src") : is;
 				} catch (OutOfMemoryError oome) {
 					throw new Exception("No memory to load image", oome);
 				}
@@ -151,5 +152,29 @@ public class BinaryFetchThread extends RobotronicThread {
 			return;
 		}
 		done();
+	}
+
+	private class FlushedInputStream extends FilterInputStream {
+		public FlushedInputStream(InputStream inputStream) {
+			super(inputStream);
+		}
+
+		@Override
+		public long skip(long n) throws IOException {
+			long totalBytesSkipped = 0L;
+			while (totalBytesSkipped < n) {
+				long bytesSkipped = in.skip(n - totalBytesSkipped);
+				if (bytesSkipped == 0L) {
+					int b = read();
+					if (b < 0) {
+						break; // we reached EOF
+					} else {
+						bytesSkipped = 1; // we read one byte
+					}
+				}
+				totalBytesSkipped += bytesSkipped;
+			}
+			return totalBytesSkipped;
+		}
 	}
 }
