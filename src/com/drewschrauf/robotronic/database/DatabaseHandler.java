@@ -62,5 +62,23 @@ public class DatabaseHandler {
 		}
 
 	}
+	
+	/**
+	 * Delete all the cached data
+	 * 	 
+	 */
+	public void deleteAllData() {
+		try {
+			SQLiteDatabase db = helper.getReadableDatabase();
+			db.delete(DatabaseHelper.TABLE_NAME, null, null);
+			db.close();
+		} catch (Exception e) {
+			// database was closed before it could be written to, just skip it
+			// this time
+			Log.e("DatabaseHandler",
+					"Database could not be written to, skipping deleteAll");
+		}
+
+	}
 
 }
