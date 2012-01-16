@@ -2,6 +2,7 @@ package com.drewschrauf.robotronic.threads;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FilterInputStream;
 import java.io.IOException;
@@ -102,6 +103,8 @@ public class BinaryFetchThread extends RobotronicThread {
 				msgHandler.sendMessage(msg);
 				done();
 				return;
+			} catch (FileNotFoundException fnfe) {
+				// we've never grabbed this image before, just continue
 			} catch (Exception e) {
 				Message msg = Message.obtain();
 				msg.what = ThreadHandler.ERROR_IO;
