@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="RobotronicLib" default="jar" basedir=".">
+  <description>
+Robotronic
+  </description>
+  <!-- set global properties for this build -->
+  <property name="src" location="src" />
+  <property name="bin" location="bin" />
+
+  <target name="jar">
+    <jar destfile="Robotronic.jar" basedir="bin/classes/">
+      <!-- replace 'com' by what ever you are using -->
+      <!-- as first part of the package name -->
+      <!-- e.g. de, org, ... -->
+      <!-- the ** is important to include the directory recursively -->
+      <include name="com/drewschrauf/robotronic/**" />
+    </jar>
+  </target>
+</project>
